@@ -1,35 +1,60 @@
+
 # Compiler and flags
 CC := gcc
 CFLAGS := -Wall -Wextra -Wpedantic -O2 -std=c17 -Isrc
 LDFLAGS := 
 
-# Project
-TARGET := build/lint
-SRC := $(wildcard src/*.c)
-OBJ := $(patsubst src/%.c,build/%.o,$(SRC))
+# Directories
+BUILD_DIR := build
+SRC_DIR := src
+TEST_DIR := tests
+
+# Main program
+TARGET := $(BUILD_DIR)/lint
+SRC := $(wildcard $(SRC_DIR)/*.c)
+OBJ := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC))
+
+# Test program
+TEST_TARGET := $(BUILD_DIR)/test
+TEST_SRC := $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJ := $(patsubst $(TEST_DIR)/%.c,$(BUILD_DIR)/%.o,$(TEST_SRC))
 
 # Default rule
-all: build $(TARGET)
+all: $(TARGET)
 
 # Create build directory if it doesn't exist
-build:
-	@mkdir -p build
+$(BUILD_DIR):
+	@mkdir -p $@
 
-# Link target in build/
-$(TARGET): $(OBJ)
+# Link main program
+$(TARGET): $(OBJ) | $(BUILD_DIR)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
-# Compile each source
-build/%.o: src/%.c | build
+# Link test program
+$(TEST_TARGET): CFLAGS += -DTESTS -Itests/
+$(TEST_TARGET): $(OBJ) $(TEST_OBJ) | $(BUILD_DIR)
+	$(CC) $(OBJ) $(TEST_OBJ) -o $@ $(LDFLAGS) 
+
+# Compile source files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Run program silently
+# Compile test files
+$(BUILD_DIR)/%.o: $(TEST_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Run main program
 run: $(TARGET)
 	@./$(TARGET)
 
-# Clean build artifacts silently
-clean:
-	@rm -rf build
+# Run tests
+tests: $(TEST_TARGET)
+	@echo "running tests"
+	@./$(TEST_TARGET)
 
-.PHONY: all clean run build
+# Clean build artifacts
+clean:
+	@rm -rf $(BUILD_DIR)
+
+.PHONY: all clean run tests
 
