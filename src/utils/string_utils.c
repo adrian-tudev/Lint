@@ -5,9 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static bool isDelimiter(const char c, char* delimiters);
-
-const char** split_string(const char* s, int* words, char* delimiters) {
+const char** split_string(const char* s, size_t* words, char* delimiters) {
   const char** strings = NULL;
   int cnt = 0;
   int cur_len = 0;
@@ -26,6 +24,11 @@ const char** split_string(const char* s, int* words, char* delimiters) {
   if (cur_len > 0) cnt++;
 
   strings = (const char**) malloc(cnt * sizeof(const char*));
+  if (strings == NULL) {
+    *words = 0;
+    return NULL;
+  }
+
   *words = cnt;
 
   cnt = 0;
@@ -57,7 +60,7 @@ const char** split_string(const char* s, int* words, char* delimiters) {
   return strings;
 }
 
-static bool isDelimiter(const char c, char* delimiters) {
+bool isDelimiter(const char c, char* delimiters) {
   if (delimiters == NULL) {
     delimiters = " \n";
   }
