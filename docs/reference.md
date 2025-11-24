@@ -29,8 +29,11 @@ Variables are defined using the **let** keyword (shoutout Rust) \
 
 ## Operators (Arithmetic and Boolean)
 The usual operators for simple arithmetic `+-/*`. \
-Booleans are operated upon by `and`, `or`, `not`. \
-Comparisons are made through `==` and evaluates to a boolean value.
+Booleans are operated upon by `and`, `or` and `not`. \
+Comparisons are made through `==` and evaluates to a boolean value.\
+Compare inequality by using `!=` and `!` to invert a boolean value (equivalent to the `not` keyword ). \
+Lint offers numerical comparisons through the standard notation `<`, `>` and all combinations of \
+the equal sign (`<=`, `>=`).
 
 > Example:
 > ```

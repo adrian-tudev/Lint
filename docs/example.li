@@ -1,16 +1,17 @@
 
 import std;
 
-fn add(a: int, b: int) -> int {
-  const res = a + b;
-  if (res ==
+fn add(a, b) {
+  ret a + b;
 }
 
-fn main() -> int {
-
-  for (int i = 0; i < n; i += 1) {
+fn main() {
+  for (let i = 0; i < n; i = i + 1) {
     print(i + 1);
   }
 
-  return 0;
+  let x = 3;
+  let y = 3;
+  let sum = add(x, y);
+  print(sum);
 }
