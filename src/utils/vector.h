@@ -1,5 +1,5 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef VECTOR_H_
+#define VECTOR_H_
 
 #include <stddef.h>
 
@@ -16,4 +16,4 @@ void *vec_get(const Vector *v, size_t index);
 int   vec_set(Vector *v, size_t index, void *value);
 int   vec_reserve(Vector *v, size_t new_capacity);
 
-#endif
+#endif // VECTOR_H_
