@@ -1,74 +1,63 @@
 # Compiler and flags
-CC := gcc
+CC := clang
 CFLAGS := -Wall -Wextra -Wpedantic -O2 -std=c17 -Isrc
-LDFLAGS :=
+
+# Test flags are fixed so make can track them deterministically
+TEST_CFLAGS := $(CFLAGS) -DTESTS -Itests/
 
 # Directories
 BUILD_DIR := build
 SRC_DIR := src
 TEST_DIR := tests
 
-# Collect all source files recursively
+# Source files
 SRC := $(shell find $(SRC_DIR) -name "*.c")
-OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SRC:.c=.o))
-
-# Collect all test files
 TEST_SRC := $(wildcard $(TEST_DIR)/*.c)
-TEST_OBJ := $(patsubst $(TEST_DIR)/%, $(BUILD_DIR)/tests/%, $(TEST_SRC:.c=.o))
 
-# Build test-specific copies of src objects (compiled with -DTESTS)
+# Object files
+OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SRC:.c=.o))
+TEST_OBJ := $(patsubst $(TEST_DIR)/%,$(BUILD_DIR)/tests/%, $(TEST_SRC:.c=.o))
 TEST_SRC_OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/tests-src/%,$(SRC:.c=.o))
 
-# Binaries
+# Targets
 TARGET := $(BUILD_DIR)/lint
 TEST_TARGET := $(BUILD_DIR)/test
 
-# Default rule
 all: $(TARGET)
 
-# Ensure build directory structure exists automatically
-$(BUILD_DIR)/%/:
-	@mkdir -p $@
-
-# Link main program
+# Main program
 $(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $@ $(LDFLAGS)
+	$(CC) $(OBJ) -o $@
 
-# Build test binary (source + test objects)
-build-test: CFLAGS += -DTESTS -Itests/
-build-test: $(TEST_TARGET)
+# Test program
+$(TEST_TARGET): $(TEST_OBJ) $(TEST_SRC_OBJ)
+	$(CC) $(TEST_SRC_OBJ) $(TEST_OBJ) -o $@
 
-$(TEST_TARGET): CFLAGS += -DTESTS -Itests/
-$(TEST_TARGET): $(TEST_SRC_OBJ) $(TEST_OBJ)
-	$(CC) $(TEST_SRC_OBJ) $(TEST_OBJ) -o $@ $(LDFLAGS)
-
-# Compile any .c file in src/ recursively
+# Compile src/
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile test-specific copies of src/*.c into `build/tests-src/` (built with -DTESTS)
+# Compile test src copies (tests-src)
 $(BUILD_DIR)/tests-src/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(TEST_CFLAGS) -c $< -o $@
 
-# Compile test files into a separate tests subdirectory to avoid name collisions
+# Compile test files (tests/)
 $(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(TEST_CFLAGS) -c $< -o $@
 
-# Run tests (build first if needed)
 run-tests: $(TEST_TARGET)
-	@echo "running tests"
+	@echo running tests
 	@./$(TEST_TARGET)
+
+run: $(TARGET)
+	@echo running $(TARGET)
+	@./$(TARGET)
 
 clean:
 	@rm -rf $(BUILD_DIR)
 
-# Run main program
-run: $(TARGET)
-	@ echo "running $(TARGET)"
-	@./$(TARGET)
-
-.PHONY: all clean build-test run-tests
+.PHONY: all run run-tests clean
 
