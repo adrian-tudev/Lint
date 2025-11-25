@@ -1,10 +1,12 @@
 #ifndef TOKEN_H_
 #define TOKEN_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils/vector.h"
 
 typedef enum {
   // Single character
@@ -21,17 +23,20 @@ typedef enum {
   IDENTIFIER, STRING, NUMBER,
 
   // Keywords
-  AND, IF, ELSE, TRUE, FALSE, FUNCTION, FOR, WHILE, OR,
-  RETURN, LET, 
+  AND, OR, IF, ELIF, ELSE, TRUE, FALSE, FUNCTION, FOR, WHILE,
+  RETURN, LET,
+
+  INVALID
 } TokenType;
 
 typedef struct {
   char* token;
   TokenType type;
-  uint32_t line;
-  uint32_t character;
+  uint32_t row, column;
+  uint32_t literal;
 } Token;
 
-Token* tokenize(const char* line, int* out_count);
+bool tokenize(const char* line, Vector* tokens);
+void print_token(Token* token);
 
 #endif  // TOKEN_H_
