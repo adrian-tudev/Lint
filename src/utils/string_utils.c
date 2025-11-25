@@ -13,7 +13,7 @@ const char** split_string(const char* s, size_t* words, char* delimiters) {
   // count number of "words"
   size_t len = strlen(s);
   for (size_t i = 0; i < len; i++) {
-    if(isDelimiter(s[i], delimiters)) {
+    if(is_delimiter(s[i], delimiters)) {
       if (cur_len == 0) continue;
       cnt++;
       cur_len = 0;
@@ -34,7 +34,7 @@ const char** split_string(const char* s, size_t* words, char* delimiters) {
   cnt = 0;
   cur_len = 0;
   for (size_t i = 0; i < len; i++) {
-    if(isDelimiter(s[i], delimiters)) {
+    if(is_delimiter(s[i], delimiters)) {
       if (cur_len == 0) continue;
       // copy word into resulting array
       char* string = malloc(cur_len + 1);
@@ -60,7 +60,7 @@ const char** split_string(const char* s, size_t* words, char* delimiters) {
   return strings;
 }
 
-bool isDelimiter(const char c, char* delimiters) {
+bool is_delimiter(const char c, char* delimiters) {
   if (delimiters == NULL) {
     delimiters = " \n";
   }

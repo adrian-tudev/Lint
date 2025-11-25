@@ -13,6 +13,6 @@ const char** split_string(const char* s, size_t* len, char* delimiters);
  * Checks if given character is a delimiter. Passing NULL as a delimiter
  * defaults to whitespace and newline as delimiters.
  */
-bool isDelimiter(const char c, char* delimiters);
+bool is_delimiter(const char c, char* delimiters);
 
 #endif // STRING_UTILS_H_
