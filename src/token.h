@@ -8,6 +8,8 @@
 #include <string.h>
 #include "utils/vector.h"
 
+#define TOKEN_TYPE_COUNT INVALID + 1
+
 typedef enum {
   // Single character
   LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_BRACE, RIGHT_BRACE,
@@ -20,10 +22,10 @@ typedef enum {
   LESS, LESS_EQUAL,
   
   // Literals
-  IDENTIFIER, STRING, NUMBER,
+  STRING, LITERAL, IDENTIFIER, 
 
   // Keywords
-  AND, OR, IF, ELIF, ELSE, TRUE, FALSE, FUNCTION, FOR, WHILE,
+  AND, OR, NOT, IF, ELIF, ELSE, TRUE, FALSE, FUNCTION, FOR, WHILE,
   RETURN, LET,
 
   INVALID
