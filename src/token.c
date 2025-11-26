@@ -108,7 +108,19 @@ static void read_literal(Token* tok, const char* line, int linePos) {
 }
 
 static void read_string(Token* tok, const char* line, int linePos) {
-  tok->type = INVALID;
+  size_t i = linePos;
+  while (peek_next(line, i) != '"') i++;
+
+  i++;
+  if (line[i] != '"') {
+    tok->type = INVALID;
+    fprintf(stderr, "Error while reading string literal (no ending string quote)");
+    return;
+  }
+  size_t len = i - linePos + 1;
+  char* str_len = substring(line, linePos, len);
+  tok->token = str_len;
+  tok->type = STRING;
 }
 
 static void read_operator(Token* tok, const char* line, int linePos) {
@@ -137,6 +149,7 @@ static TokenType str_to_token(const char* tok_str) {
       return (TokenType)i;
     }
   }
+  return INVALID;
 }
 
 void print_token(Token* token) {
