@@ -11,7 +11,7 @@ static void read_string(Token* token, const char* line, int pos);
 static void read_operator(Token* token, const char* line, int pos);
 static void read_punctuation(Token* token, const char* line, int pos);
 
-static const char* TokenType_names[];
+static const char* token_names[];
 static const char operators[] = {'+', '-', '/', '*', '=', '!', '>', '<'};
 static const char punctuators[] = {'(', ')', '{', '}', ',',};
 
@@ -34,6 +34,8 @@ Vector tokenize(const char* line, uint32_t row) {
 
     Token* tok = malloc(sizeof(Token));
     tok->token = NULL;
+    tok->column = 0;
+    tok->row = row;
 
     if (isalpha(line[i]) || line[i] == '_')      read_word(tok, line, i);
     else if (isdigit(line[i]) || line[i] == '.') read_literal(tok, line, i);
@@ -118,7 +120,6 @@ static void read_literal(Token* tok, const char* line, int linePos) {
   tok->type = LITERAL;
 }
 
-// TODO
 static void read_string(Token* tok, const char* line, int linePos) {
   size_t i = linePos + 1;
   while (peek_next(line, i) != '"' && (peek_next(line, i) != '\0')) i++;
@@ -126,6 +127,7 @@ static void read_string(Token* tok, const char* line, int linePos) {
   i++;
   if (line[i] != '"') {
     tok->type = INVALID;
+    tok->column = i;
     fprintf(stderr, "Error while reading string literal (no ending string quote)\n");
     return;
   }
@@ -153,12 +155,12 @@ static void read_punctuation(Token* tok, const char* line, int linePos) {
 }
 
 static const char* token_type_name(TokenType type) {
-  return TokenType_names[type];
+  return token_names[type];
 }
 
 static TokenType str_to_token(const char* tok_str) {
   for (size_t i = 0; i < TOKEN_TYPE_COUNT; i++) {
-    if (strcmp(tok_str, TokenType_names[i]) == 0) {
+    if (strcmp(tok_str, token_names[i]) == 0) {
       return (TokenType)i;
     }
   }
@@ -174,7 +176,7 @@ void print_token(Token* token) {
     );
 }
 
-static const char* TokenType_names[] = {
+static const char* token_names[] = {
     "LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "LEFT_BRACE", "RIGHT_BRACE",
     "MINUS", "PLUS", "STAR", "SLASH", "SEMICOLON", "QUOTES", "COMMA", "DOT",
 
