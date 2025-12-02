@@ -1,6 +1,6 @@
 # Compiler and flags
 CC := clang
-CFLAGS := -Wall -Wextra -Wpedantic -O2 -std=c17 -Isrc
+CFLAGS := -Wall -Wextra -Wpedantic -O2 -g -std=c17 -Isrc
 
 # Test flags are fixed so make can track them deterministically
 TEST_CFLAGS := $(CFLAGS) -DTESTS -Itests/
