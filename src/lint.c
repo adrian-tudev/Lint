@@ -22,7 +22,7 @@ void runFile(const char* path) {
 }
 
 void run(const char* line, uint32_t row) {
-  Vector tokens = tokenize(line, 0);
+  Vector tokens = tokenize(line, row);
 
   for (size_t i = 0; i < tokens.size; i++) {
     print_token(vec_get(&tokens, i));
