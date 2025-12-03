@@ -12,12 +12,14 @@ TEST_DIR := tests
 
 # Source files
 SRC := $(shell find $(SRC_DIR) -name "*.c")
+# Exclude the main program from test-specific compilation to avoid multiple `main` symbols
+SRC_NO_MAIN := $(filter-out $(SRC_DIR)/main.c, $(SRC))
 TEST_SRC := $(wildcard $(TEST_DIR)/*.c)
 
 # Object files
 OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SRC:.c=.o))
 TEST_OBJ := $(patsubst $(TEST_DIR)/%,$(BUILD_DIR)/tests/%, $(TEST_SRC:.c=.o))
-TEST_SRC_OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/tests-src/%,$(SRC:.c=.o))
+TEST_SRC_OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/tests-src/%,$(SRC_NO_MAIN:.c=.o))
 
 # Targets
 TARGET := $(BUILD_DIR)/lint
@@ -60,4 +62,3 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 .PHONY: all run run-tests clean
-
