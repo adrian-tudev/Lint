@@ -16,7 +16,7 @@ static const char operators[] = {'+', '-', '/', '*', '=', '!', '>', '<'};
 static const char punctuators[] = {'(', ')', '{', '}', ',',};
 
 /*
- * Tokenize checks searches for tokens in the following order:
+ * Tokenize searches for tokens in the following order:
  * 1. Keywords & Identifiers 
  * 2. Literals
  * 3. Strings
@@ -34,7 +34,7 @@ Vector tokenize(const char* line, uint32_t row) {
 
     Token* tok = malloc(sizeof(Token));
     tok->token = NULL;
-    tok->column = 0;
+    tok->column = i;
     tok->row = row;
 
     if (isalpha(line[i]) || line[i] == '_')      read_word(tok, line, i);
@@ -113,6 +113,7 @@ static void read_literal(Token* tok, const char* line, int linePos) {
   if (dots > 1) {
     tok->type = INVALID;
     fprintf(stderr, "Error while reading literal (too many dots)\n");
+    free(token_str);
     return;
   } 
 
@@ -132,8 +133,8 @@ static void read_string(Token* tok, const char* line, int linePos) {
     return;
   }
   size_t len = i - linePos + 1;
-  char* str_len = substring(line, linePos, len);
-  tok->token = str_len;
+  char* token_str = substring(line, linePos, len);
+  tok->token = token_str;
   tok->type = STRING;
 }
 
@@ -145,7 +146,7 @@ static void read_operator(Token* tok, const char* line, int linePos) {
   size_t len = i - linePos + 1;
   char* op_string = substring(line, linePos, len);
 
-  if (strcmp(op_string, "!")) tok->type = BANG;
+  if (strcmp(op_string, "!") == 0) tok->type = BANG;
 
   tok->token = op_string;
 }
