@@ -81,7 +81,7 @@ char* substring(const char* src, size_t start, size_t len) {
 }
 
 bool char_in_arr(const char c, const char* arr) {
-  size_t len = sizeof(arr);
+  size_t len = strlen(arr);
   for (size_t i = 0; i < len; i++) {
     if (c == arr[i]) return true;
   }
