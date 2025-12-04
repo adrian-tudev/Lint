@@ -84,12 +84,12 @@ static Scanner* get_scanner_from_prefix(const char prefix ) {
 static void validate_token(const Scanner* scanner, const char* lexeme, Token* tok, uint32_t row, size_t i) {
   if (scanner == &string_scanner) {
     if (!is_valid_string(lexeme)) {
-      error_log("Error: Unterminated string at row %u, col %zu\n", row, i);
+      error_log("Unterminated string at row %u, col %zu\n", row, i);
     }
     tok->type = STRING;
   } else if (scanner == &literal_scanner) {
     if (!is_valid_literal(lexeme)) {
-      error_log("Error: Invalid literal format at row %u, col %zu\n", row, i);
+      error_log("Invalid literal format at row %u, col %zu\n", row, i);
     }
     tok->type = LITERAL;
   } else if (scanner == &word_scanner) {

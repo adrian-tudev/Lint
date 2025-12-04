@@ -1,19 +1,25 @@
 #include "test.h"
 
-#include "utils/color.h"
 #include "suite.h"
+#include "utils/color.h"
+#include "utils/error.h"
+
+// test suites
+#include "ast/test_ast.h"
 #include "scanners/test_scanner.h"
 #include "token/test_token.h"
 #include "misc/test_utils.h"
-#include "utils/error.h"
 
 void runTests(void) {
-  printf("\n");
+  printf("\n%s\n====================\n\n", 
+    color("     UNIT TESTS    ", ColorMAG));
 
+  // OBS: the suites should only be included here to avoid multiple definition errors
   TestSuite suites[] = {
-    get_utils_suite(),
+    get_ast_suite(),
     get_scanner_suite(),
     get_token_suite(),
+    get_utils_suite(),
   };
 
   size_t num_suites = sizeof(suites) / sizeof(TestSuite);
