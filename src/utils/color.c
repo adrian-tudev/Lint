@@ -14,7 +14,7 @@
 #define RESET "\x1B[0m"
 
 // Colors the given string with the specified color and returns it.
-const char* color(const char* string, Color string_color) {
+char* color(const char* string, Color string_color) {
   const char* color_code;
   switch (string_color) {
     case ColorRED:
