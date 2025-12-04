@@ -1,64 +1,35 @@
 #include "test.h"
 
-#define RED   "\x1B[31m"
-#define GRN   "\x1B[32m"
-#define YEL   "\x1B[33m"
-#define BLU   "\x1B[34m"
-#define MAG   "\x1B[35m"
-#define CYN   "\x1B[36m"
-#define WHT   "\x1B[37m"
-#define RESET "\x1B[0m"
-
-typedef bool (*test_fn_t)(void);
-
-static int run_case(const char* name, test_fn_t fn) {
-  bool ok = fn();
-  if (ok) {
-    printf(GRN "PASS: %s\n" RESET, name);
-    fflush(stdout);
-    return 1;
-  } else {
-    printf(RED "FAIL: %s\n" RESET, name);
-    fflush(stdout);
-    return 0;
-  }
-}
+#include "utils/color.h"
+#include "suite.h"
+#include "scanners/test_scanner.h"
+#include "token/test_token.h"
+#include "misc/test_utils.h"
 
 void runTests(void) {
-  int total = 0;
-  int passed = 0;
+  printf("\n");
 
-  test_fn_t tests[] = {
-    split_string_test,
-    word_scanner_test,
-    literal_scanner_test,
-    string_scanner_test,
-    op_scanner_test,
-    punctuation_scanner_test,
-    tokenizer_test,
-    tokenizer_error_cases_test,
-    tokenizer_edge_cases_test,
+  TestSuite suites[] = {
+    get_utils_suite(),
+    get_scanner_suite(),
+    get_token_suite(),
   };
 
-  const char* test_names[] = {
-    "split_string",
-    "word_scanner",
-    "literal_scanner",
-    "string_scanner",
-    "op_scanner",
-    "punctuation_scanner",
-    "tokenizer",
-    "tokenizer_error_cases",
-    "tokenizer_edge_cases",
-  };
-
-  size_t num_tests = sizeof(tests) / sizeof(test_fn_t);
-  for (size_t i = 0; i < num_tests; i++) {
-    total++;
-    passed += run_case(test_names[i], tests[i]);
+  size_t num_suites = sizeof(suites) / sizeof(TestSuite);
+  size_t passed_suites = 0;
+  for (size_t s = 0; s < num_suites; s++) {
+    printf("%s %s\n", color("Suite:", ColorBLU), suites[s].name);
+    int suite_passed = run_suite(suites[s]);
+    if (suite_passed == suites[s].count) {
+      passed_suites++;
+    }
   }
 
-  printf("\nTests passed: %d/%d\n", passed, total);
+  printf("\nSuites passed: %zu/%zu\n", passed_suites, num_suites);
+  if (passed_suites == num_suites)
+    printf("🎉 %s 🎉\n", color("All suites passed!", ColorGRN));
+  else
+    printf("%s\n", color("Some suites failed :/", ColorRED));
 }
 
 int main(void) {

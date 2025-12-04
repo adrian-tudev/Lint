@@ -50,20 +50,18 @@ const char** split_string(const char* s, size_t* words, char* delimiters) {
   }
 
   if (cur_len > 0) {
-      char* string = malloc(cur_len + 1);
-      memcpy(string, s + (len - cur_len), cur_len);
-      string[cur_len] = '\0';
+    char* string = malloc(cur_len + 1);
+    memcpy(string, s + (len - cur_len), cur_len);
+    string[cur_len] = '\0';
 
-      strings[++cnt] = string;
+    strings[++cnt] = string;
   }
   
   return strings;
 }
 
 bool is_delimiter(const char c, char* delimiters) {
-  if (delimiters == NULL) {
-    delimiters = " \n";
-  }
+  if (delimiters == NULL) delimiters = " \n";
 
   size_t len = strlen(delimiters);
   for (size_t i = 0; i < len; i++) {
@@ -73,7 +71,7 @@ bool is_delimiter(const char c, char* delimiters) {
   return false;
 }
 
-char* substring(const char* src, size_t start, size_t len) {
+const char* substring(const char* src, size_t start, size_t len) {
   char* token_str = malloc(len + 1);
   memcpy(token_str, src + start, len);
   token_str[len] = '\0';
