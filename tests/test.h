@@ -14,12 +14,12 @@ bool word_scanner_test(void);
 void runTests(void);
 
 // accessors for scanners defined in the implementation
-extern const TokenScanner word_scanner;
-extern const TokenScanner literal_scanner;
-extern const TokenScanner string_scanner;
-extern const TokenScanner op_scanner;
-extern const TokenScanner punctuation_scanner;
-extern const TokenScanner new_scanner; // Example of an additional scanner
+extern const Scanner word_scanner;
+extern const Scanner literal_scanner;
+extern const Scanner string_scanner;
+extern const Scanner op_scanner;
+extern const Scanner punctuation_scanner;
+extern const Scanner new_scanner; // Example of an additional scanner
 
 // additional scanner tests
 bool literal_scanner_test(void);
