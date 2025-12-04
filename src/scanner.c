@@ -20,9 +20,9 @@ char* scan(Scanner scanner, const char* line, uint32_t linePos) {
 
   // For single-character tokens where end_condition applies at the start,
   // ensure length is at least 1.
-  if (len == 0 && linePos < line_len && scanner.end_condition(line[linePos])) {
+  if (len == 0 && linePos < line_len && scanner.end_condition(line[linePos]))
     len = 1;
-  }
+
   if (scanner.include_end && i != line_len) len++;
 
   const char* lexeme = substring(line, linePos, len);
@@ -84,4 +84,5 @@ const Scanner punctuation_scanner = {
 const Scanner* scanners[] = {
   &word_scanner, &literal_scanner, &string_scanner,
   &op_scanner, &punctuation_scanner,
+  NULL // No suitable scanner found
 };
