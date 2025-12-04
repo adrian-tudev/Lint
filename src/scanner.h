@@ -7,17 +7,13 @@
 #include "token.h"
 
 typedef struct TokenScanner {
-  bool (*init_condition)(const char c);
-  bool (*end_condition)(const char c);
-
-  // indicates whether the beginning character should be included
   bool include_begin;
+  bool (*init_condition)(const char c);
 
-  // indicates whether the ending character should be included or not
   bool include_end;
+  bool (*end_condition)(const char c);
 } TokenScanner;
 
-char* scan(TokenScanner scanner, const char* line, 
-    uint32_t linePos, uint32_t row);
+char* scan(TokenScanner scanner, const char* line, uint32_t linePos);
 
 #endif // SCANNER_H_

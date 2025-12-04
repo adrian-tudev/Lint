@@ -5,8 +5,7 @@
 
 #include "utils/string_utils.h"
 
-char* scan(TokenScanner scanner, const char* line, 
-    uint32_t linePos, uint32_t row) {
+char* scan(TokenScanner scanner, const char* line, uint32_t linePos) {
 
   size_t i = linePos;
   size_t line_len = strlen(line);
@@ -17,6 +16,7 @@ char* scan(TokenScanner scanner, const char* line,
   while (i < line_len && !scanner.end_condition(line[i])) i++;
 
   size_t len = i - linePos;
+
   // For single-character tokens where end_condition applies at the start,
   // ensure length is at least 1.
   if (len == 0 && linePos < line_len && scanner.end_condition(line[linePos])) {

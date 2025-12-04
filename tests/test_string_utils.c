@@ -1,6 +1,6 @@
 #include "test.h"
 
-bool split_string_test() {
+bool split_string_test(void) {
   const char* str = "  this is  a    string  ";
   const char* gold[] = {"this", "is", "a", "string"};
 
