@@ -14,7 +14,7 @@ TEST_DIR := tests
 SRC := $(shell find $(SRC_DIR) -name "*.c")
 # Exclude the main program from test-specific compilation to avoid multiple `main` symbols
 SRC_NO_MAIN := $(filter-out $(SRC_DIR)/main.c, $(SRC))
-TEST_SRC := $(wildcard $(TEST_DIR)/*.c)
+TEST_SRC := $(shell find $(TEST_DIR) -type f -name "*.c")
 
 # Object files
 OBJ := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SRC:.c=.o))
