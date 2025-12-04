@@ -6,16 +6,16 @@
 typedef bool (*test_fn_t)(void);
 
 typedef struct {
-	const char *name;
-	test_fn_t fn;
+  const char *name;
+  test_fn_t fn;
 } TestCase;
 
 typedef struct {
-	const char *name;
-	const TestCase *cases;
-	int count;
+  const char *name;
+  const TestCase *cases;
+  int count;
 } TestSuite;
 
 int run_suite(TestSuite suite);
 
-#endif // SUITE_H_
+#endif  // SUITE_H_

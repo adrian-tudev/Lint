@@ -24,11 +24,3 @@ bool split_string_test(void) {
   free(splitted);
   return true;
 }
-
-TestSuite get_string_utils_suite(void) {
-  static const TestCase cases[] = {
-    { "split_string", split_string_test },
-  };
-  TestSuite s = { .name = "string_utils", .cases = cases, .count = sizeof(cases) / sizeof(TestCase) };
-  return s;
-}

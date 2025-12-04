@@ -71,7 +71,7 @@ bool is_delimiter(const char c, char* delimiters) {
   return false;
 }
 
-const char* substring(const char* src, size_t start, size_t len) {
+char* substring(const char* src, size_t start, size_t len) {
   char* token_str = malloc(len + 1);
   memcpy(token_str, src + start, len);
   token_str[len] = '\0';

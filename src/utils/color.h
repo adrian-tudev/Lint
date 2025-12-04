@@ -11,6 +11,13 @@ typedef enum Color {
   ColorWHT,
 } Color;
 
-const char* color(const char* string, Color string_color);
+/**
+ * Colors the given string with the specified color.
+ * @param string The string to colorize
+ * @param string_color The color to apply
+ * @return A newly allocated colored string. Caller must free.
+ *         Returns NULL on allocation failure.
+ */
+char* color(const char* string, Color string_color);
 
 #endif // COLOR_H_
