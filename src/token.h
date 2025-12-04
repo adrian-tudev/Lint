@@ -31,14 +31,14 @@ typedef enum {
   INVALID
 } TokenType;
 
-typedef struct {
+typedef struct Token {
   // error info
   uint32_t row, column;
 
   // only for numerical literals
   uint32_t literal;
 
-  char* token;
+  const char* token;
   TokenType type;
 } Token;
 

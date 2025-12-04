@@ -6,16 +6,7 @@
 
 #include "lint.h"
 
-#ifdef TESTS
-#include "test.h"
-#endif
-
 int main(int argc, char* args[]) {
-#ifdef TESTS
-  runTests();
-  return 0;
-#endif
-
   printf("Lint 0.0.1\n");
   if (argc == 2) {
     runFile(args[1]);

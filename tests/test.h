@@ -6,21 +6,31 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "scanner.h"
 #include "utils/string_utils.h"
+#include "token.h"
 
-void runTests() {
-  const char* str = "  this is  a    string  ";
-  const char* gold[] = {"this", "is", "a", "string"};
+bool split_string_test(void);
+bool word_scanner_test(void);
+void runTests(void);
 
-  size_t len = -1;
-  const char** splitted = split_string(str, &len, NULL);
-  assert(len == 4);
+// accessors for scanners defined in the implementation
+extern const Scanner word_scanner;
+extern const Scanner literal_scanner;
+extern const Scanner string_scanner;
+extern const Scanner op_scanner;
+extern const Scanner punctuation_scanner;
+extern const Scanner new_scanner; // Example of an additional scanner
 
-  for (size_t i = 0; i < len; i++) {
-    assert(strcmp(splitted[i], gold[i]) == 0);
-    printf("|%s| ", splitted[i]);
-  }
-  printf("\nTests passed!\n");
-}
+// additional scanner tests
+bool literal_scanner_test(void);
+bool string_scanner_test(void);
+bool op_scanner_test(void);
+bool punctuation_scanner_test(void);
+
+// tokenizer tests
+bool tokenizer_test(void);
+bool tokenizer_error_cases_test(void);
+bool tokenizer_edge_cases_test(void);
 
 #endif // TEST_H_
