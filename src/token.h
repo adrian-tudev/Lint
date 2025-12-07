@@ -6,30 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// auxiliary types and functions
+#include "token_aux.h"
 #include "utils/vector.h"
 
 #define TOKEN_TYPE_COUNT INVALID + 1
-
-typedef enum TokenType {
-  // Single character
-  LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_BRACE, RIGHT_BRACE,
-  MINUS, PLUS, STAR, SLASH, SEMICOLON, QUOTES, COMMA, DOT, 
-
-  // Comparison
-  BANG, BANG_EQUAL,
-  EQUAL, EQUAL_EQUAL,
-  GREATER, GREATER_EQUAL,
-  LESS, LESS_EQUAL,
-  
-  // Literals
-  STRING, LITERAL, IDENTIFIER, 
-
-  // Keywords
-  AND, OR, NOT, IF, ELIF, ELSE, TRUE, FALSE, FUNCTION, FOR, WHILE,
-  RETURN, LET,
-
-  INVALID
-} TokenType;
 
 typedef struct Token {
   // error info
