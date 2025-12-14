@@ -50,7 +50,7 @@ $(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(TEST_CFLAGS) -c $< -o $@
 
-run-tests: $(TEST_TARGET)
+tests: $(TEST_TARGET)
 	@echo running tests
 	@./$(TEST_TARGET)
 
@@ -61,4 +61,4 @@ run: $(TARGET)
 clean:
 	@rm -rf $(BUILD_DIR)
 
-.PHONY: all run run-tests clean
+.PHONY: all run tests clean
