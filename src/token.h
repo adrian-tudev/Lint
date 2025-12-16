@@ -8,7 +8,7 @@
 #include <string.h>
 
 // auxiliary types and functions
-#include "token_aux.h"
+#include "lexer/token_aux.h"
 #include "utils/vector.h"
 
 #define TOKEN_TYPE_COUNT INVALID + 1
@@ -24,7 +24,7 @@ typedef struct Token {
   TokenType type;
 } Token;
 
-Vector tokenize(const char* line, uint32_t row);
+Vector tokenize(const char* line, const uint32_t row);
 void print_token(Token* token);
 
 #endif  // TOKEN_H_

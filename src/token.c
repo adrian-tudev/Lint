@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-#include "scanner.h"
+#include "lexer/scanner.h"
 #include "utils/error.h"
 #include "utils/string_utils.h"
 
@@ -81,7 +81,7 @@ static void validate_token(const Scanner* scanner, const char* lexeme, Token* to
   }
 }
 
-static Token* construct_token(const char* lexeme, Scanner* scanner, uint32_t row, size_t i) {
+static Token* construct_token(const char* lexeme, Scanner* scanner, const uint32_t row, const size_t i) {
   Token* tok = malloc(sizeof(Token));
   *tok = (Token){ .type = lookup_token_type(lexeme), 
     .token = lexeme, .column = i, .row = row };

@@ -1,4 +1,4 @@
-#include "scanner.h"
+#include "lexer/scanner.h"
 
 #include <ctype.h>
 #include <stdlib.h>

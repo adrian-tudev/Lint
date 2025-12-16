@@ -1,7 +1,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-#include "grammar.h"
+#include "ast/grammar.h"
 
 void parse(Vector tokens);
 
