@@ -24,10 +24,10 @@ void runTests(void) {
 
   size_t num_suites = sizeof(suites) / sizeof(TestSuite);
   size_t passed_suites = 0;
-  for (size_t s = 0; s < num_suites; s++) {
-    printf("%s %s\n", color("Suite:", ColorBLU), suites[s].name);
-    int suite_passed = run_suite(suites[s]);
-    if (suite_passed == suites[s].count) {
+  for (size_t t = 0; t < num_suites; t++) {
+    printf("%s %s\n", color("Suite:", ColorBLU), suites[t].name);
+    int suite_passed = run_suite(suites[t]);
+    if (suite_passed == suites[t].count) {
       passed_suites++;
     }
     printf("\n");
@@ -45,7 +45,7 @@ void runTests(void) {
 int main(void) {
   // Ensure deterministic interleaving of stdout (colored) vs stderr (errors)
   setvbuf(stdout, NULL, _IONBF, 0);
-  // Disable error logging during unit tests for clean output
+  // Disable error logging during unit tests for cleaner output
   error_set_enabled(false);
   runTests();
   return 0;

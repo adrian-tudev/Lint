@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include "scanner.h"
 #include "suite.h"
+#include "lexer/scanner.h"
 #include "token.h"
 #include "utils/string_utils.h"
 #endif // TEST_H_
