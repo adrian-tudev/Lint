@@ -8,12 +8,16 @@
 #include "utils/error.h"
 #include "utils/string_utils.h"
 
-// PRIVATE FUNCTION DECLARATIONS
+// =====================
+// Forward Declarations
+// =====================
+
 static Scanner* get_scanner_from_prefix(const char prefix);
 static Token* construct_token(const char* lexeme, Scanner* scanner, uint32_t row, size_t i);
 
-// PUBLIC FUNCTIONS
-// =============================================================================
+// =====================
+// Public Functions
+// =====================
 
 Vector tokenize(const char* line, uint32_t row) {
   Vector tokens;
@@ -47,8 +51,9 @@ void print_token(Token* token) {
          token->row, token->column, type_name, token->token);
 }
 
-// PRIVATE FUNCTIONS
-// =============================================================================
+// =====================
+// Private Functions
+// =====================
 static bool is_valid_string(const char* str);
 static bool is_valid_literal(const char* str);
 
