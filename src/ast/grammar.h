@@ -6,12 +6,39 @@
 
 #include "utils/vector.h"
 
-// Forward declarations
+// =====================
+// Prototypes
+// =====================
+
 typedef struct Expression Expression;
 typedef struct Statement Statement;
 typedef struct Block Block;
 typedef struct Function Function;
 typedef struct Program Program;
+
+// =====================
+// Operators
+// =====================
+
+typedef enum {
+  // arithmetic operators
+  OP_ADD,
+  OP_MUL,
+  OP_SUB,
+  OP_DIV,
+
+  // boolean operators
+  OP_AND,
+  OP_OR,
+  OP_NOT,
+  OP_EQUAL,
+
+  OP_NOT_EQUAL,
+  OP_LESS_THAN,
+  OP_LESS_OR_EQUAL,
+  OP_GREATER_THAN,
+  OP_GREATER_OR_EQUAL,
+} OperatorKind;
 
 // =====================
 // Expressions
@@ -37,11 +64,11 @@ struct Expression {
     const char *identifier;
     const char *string;
     struct {
-      const char *op;
+      OperatorKind op;
       Expression *operand;
     } unary;
     struct {
-      const char *op;
+      OperatorKind op;
       Expression *left;
       Expression *right;
     } binary;
