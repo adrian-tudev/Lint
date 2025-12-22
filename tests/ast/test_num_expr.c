@@ -18,10 +18,10 @@ bool num_expr(void) {
     Expression* l = expr_number(1);
     Expression* r = expr_number(2);
 
-    Expression* addition = expr_binary("+", l, r);
+    Expression* addition = expr_binary(OP_ADD, l, r);
 
-    int result = eval_expression(addition);
-    passed_tests &= test_assert(result == 3, "1 + 2 should equal 3");
+    Expression result = eval_expression(addition);
+    passed_tests &= test_assert(result.as.number == 3, "1 + 2 should equal 3");
 
     expr_free(addition);
   }
