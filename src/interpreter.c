@@ -70,7 +70,7 @@ Expression eval_expression(Expression* expression) {
 
     default:
       error_log("Unrecognized expression kind\n");
-      break;
+      return bool_expr(false);
   }
 }
 
