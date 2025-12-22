@@ -4,6 +4,10 @@
 #include "ast/grammar.h"
 
 // walks the tree and executes the AST
-bool execute(void);
+bool execute(Program* program);
+bool execute_function_def(Function* function);
+bool execute_statement(Statement* statement);
+
+int eval_expression(Expression* expression);
 
 #endif // INTERPRETER_H_
