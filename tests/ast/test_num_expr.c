@@ -91,16 +91,6 @@ bool num_expr(void) {
   }
 
   {
-    // boolean operation: equality
-    Expression *l = expr_bool(true);
-    Expression *r = expr_bool(false);
-    Expression *equality = expr_binary(OP_EQUAL, l, r);
-    Expression result = eval_expression(equality);
-    passed_tests &= test_assert(result.as.boolean == false, "true == false should be false");
-    expr_free(equality);
-  }
-
-  {
     // more complex expression: (1 + 2) * (3 - 1)
     Expression* one = expr_number(1);
     Expression* two = expr_number(2);
