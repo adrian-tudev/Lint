@@ -28,3 +28,13 @@ int run_suite(TestSuite suite) {
 
   return passed;
 }
+
+bool test_assert(bool condition, const char* message) {
+  if (!condition) {
+    printf("%s %s\n", color("✗", ColorRED), message);
+    return false;
+  } else {
+    printf("%s %s\n", color("✓", ColorGRN), message);
+    return true;
+  }
+}

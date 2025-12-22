@@ -39,7 +39,7 @@ Expression *expr_string(const char *value) {
   return e;
 }
 
-Expression *expr_unary(const char *op, Expression *operand) {
+Expression *expr_unary(OperatorKind op, Expression *operand) {
   Expression *e = expr_alloc(EXPR_UNARY);
   if (!e) return NULL;
   e->as.unary.op = op;
@@ -47,7 +47,7 @@ Expression *expr_unary(const char *op, Expression *operand) {
   return e;
 }
 
-Expression *expr_binary(const char *op, Expression *left, Expression *right) {
+Expression *expr_binary(OperatorKind op, Expression *left, Expression *right) {
   Expression *e = expr_alloc(EXPR_BINARY);
   if (!e) return NULL;
   e->as.binary.op = op;
