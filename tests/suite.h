@@ -17,5 +17,6 @@ typedef struct {
 } TestSuite;
 
 int run_suite(TestSuite suite);
+bool test_assert(bool condition, const char* message);
 
 #endif  // SUITE_H_
