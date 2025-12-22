@@ -115,7 +115,6 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
         break;
       }
       return num(l.as.number / r.as.number);
-      break;
 
     case OP_EQUAL:
       return bool_expr(l.as.boolean == r.as.boolean);
