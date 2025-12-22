@@ -7,7 +7,7 @@
 // =====================
 
 static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op);
-static Expression eval_unary_expression(Expression left, Expression right, OperatorKind op);
+static Expression eval_unary_expression(Expression expr, OperatorKind op);
 
 // =====================
 // Public Functions
@@ -65,9 +65,8 @@ Expression eval_expression(Expression* expression) {
     
     case EXPR_UNARY:
       return eval_unary_expression(
-        *expression->as.binary.left,
-        *expression->as.binary.right, 
-        expression->as.binary.op);
+        *expression->as.unary.operand,
+        expression->as.unary.op);
 
     default:
       error_log("Unrecognized expression kind\n");
@@ -75,9 +74,81 @@ Expression eval_expression(Expression* expression) {
   }
 }
 
-static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op) {
+// =====================
+// Private Functions
+// =====================
+
+static Expression num(double value) {
+  Expression result;
+  result.kind = EXPR_NUMBER;
+  result.as.number = value;
+  return result;
 }
 
-static Expression eval_unary_expression(Expression left, Expression right, OperatorKind op) {
+static Expression bool_expr(bool value) {
+  Expression result;
+  result.kind = EXPR_BOOL;
+  result.as.boolean = value;
+  return result;
+}
 
+// recursively evaluate a binary expression
+static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op) {
+  Expression l = eval_expression(&left);
+  Expression r = eval_expression(&right);
+
+  // TODO:  type checking
+  switch (op) {
+    case OP_ADD:
+      if (l.kind != r.kind) {
+        error_log("Type mismatch in binary expression\n");
+        break;
+      }
+      return num(l.as.number + r.as.number);
+    case OP_SUB:
+      return num(l.as.number - r.as.number);
+    case OP_MUL:
+      return num(l.as.number * r.as.number);
+    case OP_DIV:
+      if (r.as.number == 0) {
+        error_log("Division by zero\n");
+        break;
+      }
+      return num(l.as.number / r.as.number);
+      break;
+
+    case OP_EQUAL:
+      return bool_expr(l.as.boolean == r.as.boolean);
+    case OP_NOT_EQUAL:
+      return bool_expr(l.as.boolean != r.as.boolean);
+
+    case OP_LESS_THAN:
+      return bool_expr(l.as.number < r.as.number);
+    case OP_LESS_OR_EQUAL:
+      return bool_expr(l.as.number <= r.as.number);
+
+    case OP_GREATER_THAN:
+      return bool_expr(l.as.number > r.as.number);
+    case OP_GREATER_OR_EQUAL:
+      return bool_expr(l.as.number >= r.as.number);
+    
+    case OP_AND:
+      return bool_expr(l.as.boolean && r.as.boolean);
+    case OP_OR:
+      return bool_expr(l.as.boolean || r.as.boolean);
+
+    default:
+      error_log("Unsupported binary operator\n");
+      break;
+  }
+}
+
+static Expression eval_unary_expression(Expression expr, OperatorKind op) {
+  Expression e = eval_expression(&expr);
+  switch (op) {
+    case OP_NOT:
+      return bool_expr(!e.as.boolean);
+    case OP_SUB:
+      return num(-e.as.number);
+  }
 }
