@@ -74,7 +74,8 @@ bool num_expr(void) {
 
     // expect an error log for division by zero
     Expression result = eval_expression(division);
-    // since division by zero is not defined, we won't check the result value here
+    // result is undefined, interpreter should have logged an error and return false
+    passed_tests &= test_assert(result.as.boolean == false, "Division by zero should return false");
 
     expr_free(division);
   }

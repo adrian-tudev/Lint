@@ -9,6 +9,9 @@
 static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op);
 static Expression eval_unary_expression(Expression expr, OperatorKind op);
 
+static Expression bool_expr(bool value);
+static Expression num(double value);
+
 // =====================
 // Public Functions
 // =====================
@@ -140,6 +143,8 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
       error_log("Unsupported binary operator\n");
       break;
   }
+
+  return bool_expr(false);
 }
 
 static Expression eval_unary_expression(Expression expr, OperatorKind op) {
@@ -150,4 +155,6 @@ static Expression eval_unary_expression(Expression expr, OperatorKind op) {
     case OP_SUB:
       return num(-e.as.number);
   }
+
+  return bool_expr(false);
 }
