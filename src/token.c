@@ -54,6 +54,7 @@ void print_token(Token* token) {
 // =====================
 // Private Functions
 // =====================
+
 static bool is_valid_string(const char* str);
 static bool is_valid_literal(const char* str);
 
@@ -67,7 +68,7 @@ static Scanner* get_scanner_from_prefix(const char prefix ) {
   return NULL;
 }
 
-static void validate_token(const Scanner* scanner, const char* lexeme, Token* tok, uint32_t row, size_t i) {
+static void validate_token(const Scanner* scanner, const char* lexeme, Token* tok, const uint32_t row, const size_t i) {
   if (scanner == &string_scanner) {
     if (!is_valid_string(lexeme)) {
       error_log("Unterminated string at row %u, col %zu\n", row, i);
@@ -77,6 +78,8 @@ static void validate_token(const Scanner* scanner, const char* lexeme, Token* to
     if (!is_valid_literal(lexeme)) {
       error_log("Invalid literal format at row %u, col %zu\n", row, i);
     }
+    // ascii to float
+    tok->literal = atof(lexeme);
     tok->type = LITERAL;
   } else if (scanner == &word_scanner) {
     // word scanner is guaranteed to produce valid identifiers

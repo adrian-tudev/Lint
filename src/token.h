@@ -18,7 +18,7 @@ typedef struct Token {
   uint32_t row, column;
 
   // only for numerical literals
-  uint32_t literal;
+  double literal;
 
   const char* token;
   TokenType type;
