@@ -1,7 +1,6 @@
 #include "interpreter.h"
 #include "utils/error.h"
 
-
 // =====================
 // Prototypes
 // =====================
@@ -47,6 +46,7 @@ bool execute_statement(Statement* statement) {
   StatementKind kind = statement->kind;
   switch (kind) {
     case STMT_EXPR:
+      eval_expression(statement->as.expr);
       break;
     default:
       break;
@@ -100,13 +100,13 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
   Expression l = eval_expression(&left);
   Expression r = eval_expression(&right);
 
-  // TODO:  type checking
+  if (l.kind != r.kind) {
+    error_log("Type mismatch in binary expression\n");
+    goto ret_error;
+  }
+
   switch (op) {
     case OP_ADD:
-      if (l.kind != r.kind) {
-        error_log("Type mismatch in binary expression\n");
-        break;
-      }
       return num(l.as.number + r.as.number);
     case OP_SUB:
       return num(l.as.number - r.as.number);
@@ -114,7 +114,7 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
       return num(l.as.number * r.as.number);
     case OP_DIV:
       if (r.as.number == 0) {
-        error_log("Division by zero\n");
+        error_log("Division by zero not allowed.\n");
         break;
       }
       return num(l.as.number / r.as.number);
@@ -144,6 +144,8 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
       break;
   }
 
+ret_error:
+
   return bool_expr(false);
 }
 
@@ -154,6 +156,11 @@ static Expression eval_unary_expression(Expression expr, OperatorKind op) {
       return bool_expr(!e.as.boolean);
     case OP_SUB:
       return num(-e.as.number);
+    case OP_ADD:
+      return num(+e.as.number);
+    default:
+      error_log("Unsupported unary operator\n");
+      break;
   }
 
   return bool_expr(false);

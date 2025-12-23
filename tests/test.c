@@ -46,7 +46,7 @@ int main(void) {
   // Ensure deterministic interleaving of stdout (colored) vs stderr (errors)
   setvbuf(stdout, NULL, _IONBF, 0);
   // Disable error logging during unit tests for cleaner output
-  error_set_enabled(false);
+  // error_set_enabled(false);
   runTests();
   return 0;
 }
