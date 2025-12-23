@@ -1,8 +1,11 @@
 #include "lint.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "ast/parser.h"
+#include "interpreter.h"
 #include "token.h"
-#include "utils/vector.h"
 
 void runFile(const char* path) {
   FILE* file = fopen(path, "r");
@@ -24,13 +27,10 @@ void runFile(const char* path) {
 void run(const char* line, uint32_t row) {
   Vector tokens = tokenize(line, row);
 
-  for (size_t i = 0; i < tokens.size; i++) {
-    print_token(vec_get(&tokens, i));
-    Token* tok = vec_get(&tokens, i);
+  Program* program = parse(tokens);
 
-    free(tok->token);
-    free(tok);
-  }
+  execute(program);
 
+  program_free(program);
   vec_free(&tokens);
 }
