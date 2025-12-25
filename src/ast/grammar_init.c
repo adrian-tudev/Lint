@@ -1,6 +1,7 @@
-#include "ast/grammar.h"
+#include "ast/grammar_init.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 static Expression *expr_alloc(ExpressionKind kind) {
   Expression *e = (Expression *)malloc(sizeof(Expression));
@@ -156,12 +157,12 @@ Statement *stmt_while(Expression *condition, Block *body) {
   return s;
 }
 
-Statement *stmt_block(void) {
-  Statement *s = stmt_alloc(STMT_BLOCK);
-  if (!s) return NULL;
-  block_init(&s->as.block);
-  return s;
-}
+// Statement *stmt_block(void) {
+//   Statement *s = stmt_alloc(STMT_BLOCK);
+//   if (!s) return NULL;
+//   block_init(&s->as.block);
+//   return s;
+// }
 
 void stmt_free(Statement *stmt) {
   if (!stmt) return;
@@ -184,9 +185,9 @@ void stmt_free(Statement *stmt) {
       expr_free(stmt->as.while_stmt.condition);
       block_free(stmt->as.while_stmt.body);
       break;
-    case STMT_BLOCK:
-      block_clear(&stmt->as.block);
-      break;
+    // case STMT_BLOCK:
+    //   block_clear(&stmt->as.block);
+    //   break;
     default:
       break;
   }
@@ -258,4 +259,40 @@ void program_free(Program *p) {
   }
   vec_free(&p->items);
   free(p);
+}
+
+void print_expression(Expression *expr) {
+  if (!expr) {
+    printf("NULL Expression\n");
+    return;
+  }
+
+  switch (expr->kind) {
+    case EXPR_NUMBER:
+      printf("Number: %f\n", expr->as.number);
+      break;
+    case EXPR_BOOL:
+      printf("Boolean: %s\n", expr->as.boolean ? "true" : "false");
+      break;
+    case EXPR_IDENTIFIER:
+      printf("Identifier: %s\n", expr->as.identifier);
+      break;
+    case EXPR_STRING:
+      printf("String: \"%s\"\n", expr->as.string);
+      break;
+    case EXPR_UNARY:
+      printf("Unary Expression: Operator %d\n", expr->as.unary.op);
+      print_expression(expr->as.unary.operand);
+      break;
+    case EXPR_BINARY:
+      printf("Binary Expression: Operator %d\n", expr->as.binary.op);
+      printf("Left Operand:\n");
+      print_expression(expr->as.binary.left);
+      printf("Right Operand:\n");
+      print_expression(expr->as.binary.right);
+      break;
+    default:
+      printf("Unknown Expression Kind\n");
+      break;
+  }
 }

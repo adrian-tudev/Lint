@@ -1,6 +1,6 @@
 #include "test.h"
 
-#include "ast/grammar.h"
+#include "ast/grammar_init.h"
 #include "interpreter.h"
 
 // check type mismatches in expressions
