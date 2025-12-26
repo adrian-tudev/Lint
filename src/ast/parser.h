@@ -6,9 +6,6 @@
 // main recursive parsing function
 Program* parse(Vector tokens);
 
-// initialize parsing context
-void init_parse_context(Vector tokens);
-
 // helper functions
 Statement* parse_statement(void);
 Expression* parse_expression(void);

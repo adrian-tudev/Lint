@@ -9,6 +9,7 @@
 #include "scanners/test_scanner.h"
 #include "token/test_token.h"
 #include "misc/test_utils.h"
+#include "parser/test_parser.h"
 
 void runTests(void) {
   printf("\n%s\n====================\n\n", 
@@ -20,6 +21,7 @@ void runTests(void) {
     get_scanner_suite(),
     get_token_suite(),
     get_utils_suite(),
+    get_parser_suite(),
   };
 
   size_t num_suites = sizeof(suites) / sizeof(TestSuite);
