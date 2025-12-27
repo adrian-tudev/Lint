@@ -27,9 +27,14 @@ void runFile(const char* path) {
 void run(const char* line, uint32_t row) {
   Vector tokens = tokenize(line, row);
 
+  // for now, just execute expressions
   Program* program = parse(tokens);
-
-  execute(program);
+  for (size_t i = 0; i < program->items.size; i++) {
+    Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
+    Expression* expr = stmt->as.expr;
+    float result = eval_expression(expr).as.number;
+    printf("%f\n", result);
+  }
 
   program_free(program);
   vec_free(&tokens);
