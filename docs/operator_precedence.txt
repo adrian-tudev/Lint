@@ -1,0 +1,15 @@
+Operator Precedence
+===================
+
+The following table lists the precedence of operators in the Lint language, from highest to lowest.
+
+| Precedence | Operator      | Description            | Associativity |
+|:----------:|:-------------:|:-----------------------|:-------------:|
+| Highest    | ! -           | Unary                  | Right-to-Left |
+|            | * /           | Multiplicative         | Left-to-Right |
+|            | + -           | Additive               | Left-to-Right |
+|            | < <= > >=     | Comparison             | Left-to-Right |
+|            | == !=         | Equality               | Left-to-Right |
+|            | &&            | Logical AND            | Left-to-Right |
+| Lowest     | ||            | Logical OR             | Left-to-Right |
+
