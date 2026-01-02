@@ -32,8 +32,18 @@ void run(const char* line, uint32_t row) {
   for (size_t i = 0; i < program->items.size; i++) {
     Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
     Expression* expr = stmt->as.expr;
-    float result = eval_expression(expr).as.number;
-    printf("%f\n", result);
+    Expression result = eval_expression(expr);
+    switch (result.kind) {
+      case EXPR_BOOL:
+        printf("%d\n", result.as.boolean);
+        break;
+      case EXPR_NUMBER:
+        printf("%f\n", result.as.number);
+        break;
+      default:
+        printf("weird type evaluated\n");
+        printf("%d\n", expr->kind);
+    }
   }
 
   program_free(program);
