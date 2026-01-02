@@ -57,14 +57,14 @@ bool tokenizer_test(void) {
     if (!expect_tokens(input, types, lexemes, 4)) return false;
   }
 
-  // Case 3: if a >= 10 and b != 0 { }
+  // Case 3: if a >= 10 && b != 0 { }
   {
-    const char *input = "if a >= 10 and b != 0 { }";
+    const char *input = "if a >= 10 && b != 0 { }";
     const TokenType types[] = {
       IF, IDENTIFIER, GREATER_EQUAL, LITERAL, AND, IDENTIFIER, BANG_EQUAL, LITERAL, LEFT_BRACE, RIGHT_BRACE
     };
     const char *lexemes[] = {
-      "if", "a", ">=", "10", "and", "b", "!=", "0", "{", "}"
+      "if", "a", ">=", "10", "&&", "b", "!=", "0", "{", "}"
     };
     if (!expect_tokens(input, types, lexemes, 10)) return false;
   }
