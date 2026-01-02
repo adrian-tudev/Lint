@@ -29,7 +29,7 @@ static const char* token_names[] = {
 
   "STRING", "LITERAL", "IDENTIFIER",
 
-  "AND", "OR", "NOT", "IF", "ELIF", "ELSE", "TRUE", "FALSE",
+  "AND", "OR", "IF", "ELIF", "ELSE", "TRUE", "FALSE",
   "FUNCTION", "FOR", "WHILE", "RETURN", "LET",
 
   "INVALID"
@@ -45,7 +45,7 @@ static LookupEntry token_lookup[] = {
     { ",", COMMA },              { ".", DOT },
 
     // Boolean / arithmetic operators
-    { "and", AND }, { "or", OR }, { "not", NOT },
+    { "&&", AND }, { "||", OR },
 
     // Comparison operators
     { "!", BANG },         { "!=", BANG_EQUAL },
