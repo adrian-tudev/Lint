@@ -126,8 +126,10 @@ static const OpPrecedence precedences[] = {
   {ops_factor, 2}
 };
 
+static const size_t precedence_levels = sizeof(precedences) / sizeof(OpPrecedence);
+
 static Expression* parse_binary(size_t level) {
-  if (level >= sizeof(precedences) / sizeof(OpPrecedence)) {
+  if (level >= precedence_levels) {
     return parse_unary();
   }
 
@@ -151,9 +153,9 @@ static Expression* parse_binary(size_t level) {
     Expression* right = parse_binary(level + 1);
     if (right == NULL) {
       if (ctx_end()) {
-        error_log("Unexpected end of file after binary operator", 0, 0);
+        error_log("Unexpected EOF after binary operator\n", 0, 0);
       } else {
-        error_log("Expected expression after binary operator", peek()->row, peek()->column);
+        error_log("Expected expression after binary operator\n", peek()->row, peek()->column);
       }
       return NULL;
     }
@@ -169,9 +171,9 @@ static Expression* parse_unary(void) {
     Expression* operand = parse_unary();
     if (operand == NULL) {
       if (ctx_end()) {
-        error_log("Unexpected end of file after unary operator", 0, 0);
+        error_log("Unexpected EOF after unary operator\n", 0, 0);
       } else {
-        error_log("Expected expression after unary operator", peek()->row, peek()->column);
+        error_log("Expected expression after unary operator\n", peek()->row, peek()->column);
       }
       return NULL;
     }
@@ -197,9 +199,9 @@ static Expression* parse_primary(void) {
     Expression* expr = parse_expression();
     if (!match(RIGHT_PARENTHESIS)) {
       if (ctx_end()) {
-        error_log("Unexpected end of file, expected ')'", 0, 0);
+        error_log("Unexpected EOF, expected ')'\n", 0, 0);
       } else {
-        error_log("Expected ')' after expression", peek()->row, peek()->column);
+        error_log("Expected ')' after expression\n", peek()->row, peek()->column);
       }
       return NULL;
     }
@@ -209,9 +211,9 @@ static Expression* parse_primary(void) {
   
   // Error handling
   if (ctx_end()) {
-      error_log("Unexpected end of file", 0, 0);
+      error_log("Unexpected EOF\n", 0, 0);
   } else {
-      error_log("Unexpected token", peek()->row, peek()->column);
+      error_log("Unexpected token\n", peek()->row, peek()->column);
       token_error();
   }
   return NULL;
