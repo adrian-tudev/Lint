@@ -1,5 +1,5 @@
 #include "test.h"
-#include "ast/parser.h"
+#include "parser/parser.h"
 #include "interpreter.h"
 
 bool parser_edge_cases(void) {

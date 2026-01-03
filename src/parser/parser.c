@@ -3,8 +3,8 @@
 #include <assert.h>
 
 #include "ast/grammar.h"
-#include "parser_types/parser_aux.h"
-#include "parser_types/expr_parser.h"
+#include "parser/parser_aux.h"
+#include "parser/expr_parser.h"
 #include "token.h"
 #include "utils/error.h"
 
