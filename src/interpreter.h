@@ -1,7 +1,7 @@
 #ifndef INTERPRETER_H_
 #define INTERPRETER_H_
 
-#include "ast/grammar_init.h"
+#include "ast/grammar.h"
 
 // walks the tree and executes the AST
 bool execute(Program* program);

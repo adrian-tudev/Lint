@@ -1,6 +1,6 @@
 #include "test.h"
 
-#include "ast/grammar_init.h"
+#include "ast/grammar.h"
 #include "interpreter.h"
 
 // test numeric expressions in the AST

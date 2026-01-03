@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "ast/grammar_init.h"
+#include "ast/grammar.h"
 #include "utils/error.h"
 #include "token.h"
 

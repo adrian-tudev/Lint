@@ -1,5 +1,5 @@
-#ifndef GRAMMAR_INIT_H_
-#define GRAMMAR_INIT_H_
+#ifndef GRAMMAR_H_
+#define GRAMMAR_H_
 
 #include <stdbool.h>
 
@@ -45,4 +45,4 @@ bool program_add_statement(Program *p, Statement *stmt);
 bool program_add_function(Program *p, Function *fn);
 void program_free(Program *p);
 
-#endif // GRAMMAR_INIT_H_
+#endif // GRAMMAR_H_

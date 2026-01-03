@@ -1,7 +1,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-#include "ast/grammar_init.h"
+#include "ast/grammar.h"
 
 // main recursive parsing function
 Program* parse(Vector tokens);
