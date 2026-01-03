@@ -1,4 +1,4 @@
-#include "parser_types/parser_aux.h"
+#include "parser/parser_aux.h"
 
 typedef struct ParseContext {
   Vector tokens;

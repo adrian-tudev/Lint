@@ -85,8 +85,7 @@ static void validate_token(const Scanner* scanner, const char* lexeme, Token* to
     // word scanner is guaranteed to produce valid identifiers
     tok->type = IDENTIFIER;
   } else {
-    error_log("No suitable scanner for character at row %u, col %zu\n", row, i);
-    assert(false && "Unhandled scanner type");
+    error_log("No suitable scanner for character at row %u, col %zu (invalid token)\n", row, i);
   }
 }
 

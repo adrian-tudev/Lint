@@ -1,6 +1,6 @@
 #include "test.h"
 
-#include "ast/parser.h"
+#include "parser/parser.h"
 #include "interpreter.h"
 
 bool complex_expr_parsing(void) {

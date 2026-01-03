@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ast/parser.h"
+#include "parser/parser.h"
 #include "interpreter.h"
 #include "token.h"
 
@@ -35,7 +35,7 @@ void run(const char* line, uint32_t row) {
     Expression result = eval_expression(expr);
     switch (result.kind) {
       case EXPR_BOOL:
-        printf("%d\n", result.as.boolean);
+        printf("%s\n", (result.as.boolean == 1 ? "true" : "false"));
         break;
       case EXPR_NUMBER:
         printf("%f\n", result.as.number);

@@ -1,6 +1,6 @@
 #include "test.h"
 
-#include "ast/parser.h"
+#include "parser/parser.h"
 #include "interpreter.h"
 
 bool unary_expr_parsing(void) {
