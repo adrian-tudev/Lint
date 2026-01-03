@@ -36,7 +36,7 @@ static const char punctuators[] = "[](){}.,;:";
 // Implement scanner condition functions here
 static bool init_word(const char c) { return isalpha((unsigned char)c) || c == '_'; }
 static bool end_word(const char c) { return !(isalnum((unsigned char)c) || c == '_'); }
-static bool init_literal(const char c) { return isdigit((unsigned char)c) || c == '.'; }
+static bool init_literal(const char c) { return isdigit((unsigned char)c) || c == '.' || c == '+' || c == '-'; }
 static bool end_literal(const char c) { return !(isdigit((unsigned char)c) || c == '.'); }
 static bool init_string(const char c) { return c == '"'; }
 static bool end_string(const char c) { return c == '"' || c == '\0'; }

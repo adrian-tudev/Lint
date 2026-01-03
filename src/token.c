@@ -78,13 +78,14 @@ static void validate_token(const Scanner* scanner, const char* lexeme, Token* to
     if (!is_valid_literal(lexeme)) {
       error_log("Invalid literal format at row %u, col %zu\n", row, i);
     }
-    // ascii to float
+    // TODO: handle ascii to float conversion failure
     tok->literal = atof(lexeme);
     tok->type = LITERAL;
   } else if (scanner == &word_scanner) {
     // word scanner is guaranteed to produce valid identifiers
     tok->type = IDENTIFIER;
   } else {
+    error_log("No suitable scanner for character at row %u, col %zu\n", row, i);
     assert(false && "Unhandled scanner type");
   }
 }
