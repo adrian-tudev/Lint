@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "token.h"
+
 static Expression *expr_alloc(ExpressionKind kind) {
   Expression *e = (Expression *)malloc(sizeof(Expression));
   if (!e) return NULL;
@@ -294,5 +296,24 @@ void print_expression(Expression *expr) {
     default:
       printf("Unknown Expression Kind\n");
       break;
+  }
+}
+
+OperatorKind token_type_to_op(TokenType type) {
+  switch (type) {
+    case PLUS: return OP_ADD;
+    case MINUS: return OP_SUB;
+    case STAR: return OP_MUL;
+    case SLASH: return OP_DIV;
+    case BANG: return OP_NOT;
+    case EQUAL_EQUAL: return OP_EQUAL;
+    case BANG_EQUAL: return OP_NOT_EQUAL;
+    case LESS: return OP_LESS_THAN;
+    case LESS_EQUAL: return OP_LESS_OR_EQUAL;
+    case GREATER: return OP_GREATER_THAN;
+    case GREATER_EQUAL: return OP_GREATER_OR_EQUAL;
+    case AND: return OP_AND;
+    case OR: return OP_OR;
+    default: return (OperatorKind)-1;
   }
 }
