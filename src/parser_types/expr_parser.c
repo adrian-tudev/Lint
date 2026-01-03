@@ -3,7 +3,23 @@
 #include "ast/grammar.h"
 #include "utils/error.h"
 
-static Expression *parse_binary(size_t level);
+typedef enum {
+    LEVEL_LOGICAL_OR,
+    LEVEL_LOGICAL_AND,
+    LEVEL_EQUALITY,
+    LEVEL_COMPARISON,
+    LEVEL_TERM,
+    LEVEL_FACTOR,
+    LEVEL_UNARY,
+    LEVEL_PRIMARY,
+} Levels;
+
+typedef struct {
+  const OperatorKind* ops;
+  size_t count;
+} OpPrecedence;
+
+static Expression *parse_binary(Levels level);
 static Expression* parse_unary(void);
 static Expression* parse_primary(void);
 
@@ -11,13 +27,8 @@ static Expression* parse_primary(void);
 // factor ::= NUMBER | IDENTIFIER | "(" expr ")"
 // term ::= factor ( ( "*" | "/" ) factor )*
 Expression *parse_expression(void) {
-  return parse_binary(0);
+  return parse_binary(LEVEL_LOGICAL_OR);
 }
-
-typedef struct {
-  const OperatorKind* ops;
-  size_t count;
-} OpPrecedence;
 
 static const OperatorKind ops_or[] = {OP_OR};
 static const OperatorKind ops_and[] = {OP_AND};
@@ -35,9 +46,8 @@ static const OpPrecedence precedences[] = {
   {ops_factor, 2}
 };
 
-static Expression* parse_binary(size_t level) {
-  const size_t precedence_levels = sizeof(precedences) / sizeof(OpPrecedence);
-  if (level >= precedence_levels) {
+static Expression* parse_binary(Levels level) {
+  if (level == LEVEL_UNARY) {
     return parse_unary();
   }
 
@@ -60,11 +70,7 @@ static Expression* parse_binary(size_t level) {
     advance();
     Expression* right = parse_binary(level + 1);
     if (right == NULL) {
-      if (ctx_end()) {
-        error_log("Unexpected EOF after binary operator\n", 0, 0);
-      } else {
-        error_log("Expected expression after binary operator\n", peek()->row, peek()->column);
-      }
+      error_log("Expected expression after binary operator\n");
       return NULL;
     }
     expr = expr_binary(op, expr, right);
@@ -78,11 +84,7 @@ static Expression* parse_unary(void) {
     advance();
     Expression* operand = parse_unary();
     if (operand == NULL) {
-      if (ctx_end()) {
-        error_log("Unexpected EOF after unary operator\n", 0, 0);
-      } else {
-        error_log("Expected expression after unary operator\n", peek()->row, peek()->column);
-      }
+      error_log("Expected expression after unary operator\n");
       return NULL;
     }
     return expr_unary(op, operand);
@@ -91,12 +93,17 @@ static Expression* parse_unary(void) {
 }
 
 static Expression* parse_primary(void) {
-  // printf("parse_primary pos=%zu size=%zu\n", ctx.position, ctx.tokens.size);
   if (match(LITERAL)) {
     Token* token = peek();
     advance();
     Expression* expr = expr_number(token->literal);
     return expr;
+  } else if (match(TRUE)) {
+    advance();
+    return expr_bool(true);
+  } else if (match(FALSE)) {
+    advance();
+    return expr_bool(false);
   } else if (match(IDENTIFIER)) {
     Token* token = peek();
     advance();
@@ -106,23 +113,14 @@ static Expression* parse_primary(void) {
     advance();
     Expression* expr = parse_expression();
     if (!match(RIGHT_PARENTHESIS)) {
-      if (ctx_end()) {
-        error_log("Unexpected EOF, expected ')'\n", 0, 0);
-      } else {
-        error_log("Expected ')' after expression\n", peek()->row, peek()->column);
-      }
+      error_log("Expected ')' after expression\n");
       return NULL;
     }
     advance();
     return expr;
-  }
-  
-  // Error handling
-  if (ctx_end()) {
-      error_log("Unexpected EOF\n", 0, 0);
   } else {
-      error_log("Unexpected token\n", peek()->row, peek()->column);
-      print_token(peek());
+    error_log("Unexpected token\n");
+    if (!ctx_end()) print_token(peek());
+    return NULL;
   }
-  return NULL;
 }
