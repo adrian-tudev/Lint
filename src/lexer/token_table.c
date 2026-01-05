@@ -1,4 +1,4 @@
-#include "token_aux.h"
+#include "token_table.h"
 
 static const char* token_names[];
 static LookupEntry token_lookup[];
