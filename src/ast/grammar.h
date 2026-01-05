@@ -49,4 +49,7 @@ void program_free(Program *p);
 // AUX functions
 OperatorKind token_type_to_op(TokenType type);
 
+bool is_numerical_op(OperatorKind op);
+bool is_boolean_op(OperatorKind op);
+
 #endif // GRAMMAR_H_

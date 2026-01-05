@@ -127,7 +127,7 @@ bool complex_expr_parsing(void) {
     // This should result in a type mismatch error during evaluation
     // because (1 < 2) is true (bool), and true < 3 is bool < number.
     Expression res = eval_expression(expr);
-    passed_tests &= test_assert(res.kind == EXPR_BOOL && res.as.boolean == false, "1 < 2 < 3 should fail type check");
+    passed_tests &= test_assert(res.kind == EXPR_INVALID, "1 < 2 < 3 should fail type check");
     vec_free(&tokens);
     program_free(program);
   }

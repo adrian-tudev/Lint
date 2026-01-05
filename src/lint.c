@@ -40,6 +40,8 @@ void run(const char* line, uint32_t row) {
       case EXPR_NUMBER:
         printf("%f\n", result.as.number);
         break;
+      case EXPR_INVALID:
+        break;
       default:
         printf("weird type evaluated\n");
         printf("%d\n", expr->kind);
