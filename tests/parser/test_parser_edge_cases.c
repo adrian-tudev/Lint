@@ -1,6 +1,6 @@
 #include "test.h"
 #include "parser/parser.h"
-#include "interpreter.h"
+#include "execution/interpreter.h"
 
 bool parser_edge_cases(void) {
   bool passed_tests = true;

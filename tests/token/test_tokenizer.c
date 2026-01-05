@@ -1,5 +1,5 @@
 #include "test.h"
-#include "token.h"
+#include "lexer/token.h"
 #include "utils/vector.h"
 
 static void free_tokens(Vector *tokens) {

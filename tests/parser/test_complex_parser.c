@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "parser/parser.h"
-#include "interpreter.h"
+#include "execution/interpreter.h"
 
 bool complex_expr_parsing(void) {
   bool passed_tests = true;

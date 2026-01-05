@@ -6,6 +6,6 @@
 #include <string.h>
 #include "suite.h"
 #include "lexer/scanner.h"
-#include "token.h"
+#include "lexer/token.h"
 #include "utils/string_utils.h"
 #endif // TEST_H_

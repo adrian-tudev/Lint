@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "ast/grammar_types.h"
-#include "token.h"
+#include "lexer/token.h"
 
 // =====================
 // Constructors / destructors

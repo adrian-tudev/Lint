@@ -4,7 +4,7 @@
 
 #include "ast/grammar.h"
 #include "parser/expression.h"
-#include "token.h"
+#include "lexer/token.h"
 #include "utils/error.h"
 
 // recursive descent parser

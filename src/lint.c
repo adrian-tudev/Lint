@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #include "parser/parser.h"
-#include "interpreter.h"
-#include "token.h"
+#include "execution/interpreter.h"
+#include "lexer/token.h"
 
 void runFile(const char* path) {
   FILE* file = fopen(path, "r");

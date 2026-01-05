@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "ast/grammar.h"
-#include "interpreter.h"
+#include "execution/interpreter.h"
 
 // check type mismatches in expressions
 bool type_mismatch(void) {

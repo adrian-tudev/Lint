@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "token.h"
+#include "lexer/token.h"
 
 static Expression *expr_alloc(ExpressionKind kind) {
   Expression *e = (Expression *)malloc(sizeof(Expression));

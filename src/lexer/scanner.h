@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "token.h"
+#include "lexer/token.h"
 
 typedef struct Scanner {
   bool include_begin;

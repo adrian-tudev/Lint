@@ -1,4 +1,4 @@
-#include "token.h"
+#include "lexer/token.h"
 
 #include <assert.h>
 #include <stdbool.h>
