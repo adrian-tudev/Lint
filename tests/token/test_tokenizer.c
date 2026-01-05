@@ -1,5 +1,5 @@
 #include "test.h"
-#include "token.h"
+#include "lexer/token.h"
 #include "utils/vector.h"
 
 static void free_tokens(Vector *tokens) {
@@ -165,6 +165,42 @@ bool tokenizer_edge_cases_test(void) {
     const TokenType types[] = { LEFT_PARENTHESIS, RIGHT_PARENTHESIS, RIGHT_PARENTHESIS };
     const char *lexemes[] = { "(", ")", ")" };
     if (!expect_tokens(input, types, lexemes, 3)) return false;
+  }
+
+  return true;
+}
+
+bool tokenizer_no_delimiter_expr(void) {
+  {
+    const char* input = "123+456";
+    const TokenType types[] = { LITERAL, PLUS, LITERAL };
+    const char* lexemes[] = { "123", "+", "456" };
+    if (!expect_tokens(input, types, lexemes, 3)) return false;
+    printf("passed 123+456\n");
+  }
+
+  { // "1<-123"
+    const char* input = "1<-123";
+    const TokenType types[] = { LITERAL, LESS, MINUS, LITERAL };
+    const char* lexemes[] = { "1", "<", "-", "123" };
+    if (!expect_tokens(input, types, lexemes, 4)) return false;
+    printf("passed 1<-123\n");
+  }
+
+  { // true&&!!!false
+    const char* input = "true&&!!!false";
+    const TokenType types[] = { TRUE, AND, BANG, BANG, BANG, FALSE };
+    const char* lexemes[] = { "true", "&&", "!", "!", "!", "false" };
+    if (!expect_tokens(input, types, lexemes, 6)) return false;
+    printf("passed true&&!!!false\n");
+  }
+
+  { // 1<=+-2
+    const char* input = "1<=+-.2";
+    const TokenType types[] = { LITERAL, LESS_EQUAL, PLUS, MINUS, LITERAL };
+    const char* lexemes[] = { "1", "<=", "+", "-", ".2" };
+    if (!expect_tokens(input, types, lexemes, 5)) return false;
+    printf("passed 1<=+-2\n");
   }
 
   return true;

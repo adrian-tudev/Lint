@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "ast/grammar.h"
-#include "interpreter.h"
+#include "execution/interpreter.h"
 
 // check type mismatches in expressions
 bool type_mismatch(void) {
@@ -15,8 +15,7 @@ bool type_mismatch(void) {
         Expression* addition = expr_binary(OP_ADD, l, r);
 
         Expression result = eval_expression(addition);
-        passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL (error)");
-        passed_tests &= test_assert(result.as.boolean == false, "1 + true should result in type mismatch and return false");
+        passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
         expr_free(addition);
     }
@@ -29,8 +28,7 @@ bool type_mismatch(void) {
         Expression* comparison = expr_binary(OP_LESS_THAN, l, r);
 
         Expression result = eval_expression(comparison);
-        passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL (error)");
-        passed_tests &= test_assert(result.as.boolean == false, "5 < false should result in type mismatch and return false");
+        passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
         expr_free(comparison);
     }
@@ -43,8 +41,7 @@ bool type_mismatch(void) {
         Expression* and_expr = expr_binary(OP_AND, l, r);
 
         Expression result = eval_expression(and_expr);
-        passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL (error)");
-        passed_tests &= test_assert(result.as.boolean == false, "0 AND true should result in type mismatch and return false");
+        passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
         expr_free(and_expr);
     }

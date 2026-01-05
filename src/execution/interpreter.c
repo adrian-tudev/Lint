@@ -1,4 +1,4 @@
-#include "interpreter.h"
+#include "execution/interpreter.h"
 #include "utils/error.h"
 
 // =====================
@@ -95,15 +95,32 @@ static Expression bool_expr(bool value) {
   return result;
 }
 
+static Expression invalid_expr(void) {
+  Expression result;
+  result.kind = EXPR_INVALID;
+  return result;
+}
+
 // recursively evaluate a binary expression
 static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op) {
   Expression l = eval_expression(&left);
   Expression r = eval_expression(&right);
 
   if (l.kind != r.kind) {
-    error_log("Type mismatch in binary expression\n");
+    error_log("Type mismatch in binary operation!\n");
     goto ret_error;
   }
+
+  if (l.kind == EXPR_NUMBER && l.kind == r.kind && !is_numerical_op(op)) {
+    error_log("Can't perform boolean operation on numericals.\n");
+    goto ret_error;
+  }
+
+  if (l.kind == EXPR_BOOL && l.kind == r.kind && !is_boolean_op(op)) {
+    error_log("Can't perform numerical operation on booleans.\n");
+    goto ret_error;
+  }
+
 
   switch (op) {
     case OP_ADD:
@@ -146,7 +163,7 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
 
 ret_error:
 
-  return bool_expr(false);
+  return invalid_expr();
 }
 
 static Expression eval_unary_expression(Expression expr, OperatorKind op) {

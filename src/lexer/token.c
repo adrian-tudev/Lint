@@ -1,4 +1,4 @@
-#include "token.h"
+#include "lexer/token.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -13,12 +13,15 @@
 // =====================
 
 static Scanner* get_scanner_from_prefix(const char prefix);
-static Token* construct_token(const char* lexeme, Scanner* scanner, uint32_t row, size_t i);
+static Token* token_from_lexeme(const char* lexeme, Scanner* scanner, uint32_t row, size_t i);
 
 // =====================
 // Public Functions
 // =====================
 
+/*
+Get suitable scanner, scan lexeme until scanner end condition and construct token[s] from given lexeme.
+*/
 Vector tokenize(const char* line, uint32_t row) {
   Vector tokens;
   vec_init(&tokens);
@@ -37,11 +40,18 @@ Vector tokenize(const char* line, uint32_t row) {
     const char* lexeme = scan(*scanner, line, i);
 
     // constructs token and validate if needed, handles errors internally
-    Token* tok = construct_token(lexeme, scanner, row, i);
+    Token* tok = token_from_lexeme(lexeme, scanner, row, i);
 
     vec_push(&tokens, tok);
     i += strlen(tok->token) - 1;
   }
+
+  // printf("Tokenized %zu tokens\n", tokens.size);
+  // for (size_t j = 0; j < tokens.size; j++) {
+  //   Token* t = (Token*)vec_get(&tokens, j);
+  //   print_token(t);
+  // }
+
   return tokens;
 }
 
@@ -58,17 +68,15 @@ void print_token(Token* token) {
 static bool is_valid_string(const char* str);
 static bool is_valid_literal(const char* str);
 
-static Scanner* get_scanner_from_prefix(const char prefix ) {
-  for (size_t j = 0; scanners[j] != NULL; j++) {
-    Scanner* scanner = (Scanner*)scanners[j];
-    if (scanner->init_condition(prefix)) {
-      return scanner;
-    }
+static Scanner* get_scanner_from_prefix(const char prefix) {
+  for (size_t i = 0; scanners[i] != NULL; i++) {
+    Scanner* scanner = (Scanner*)scanners[i];
+    if (scanner->init_condition(prefix)) return scanner;
   }
   return NULL;
 }
 
-static void validate_token(const Scanner* scanner, const char* lexeme, Token* tok, const uint32_t row, const size_t i) {
+static void resolve_token(const Scanner* scanner, const char* lexeme, Token* tok, const uint32_t row, const size_t i) {
   if (scanner == &string_scanner) {
     if (!is_valid_string(lexeme)) {
       error_log("Unterminated string at row %u, col %zu\n", row, i);
@@ -84,19 +92,37 @@ static void validate_token(const Scanner* scanner, const char* lexeme, Token* to
   } else if (scanner == &word_scanner) {
     // word scanner is guaranteed to produce valid identifiers
     tok->type = IDENTIFIER;
+  } else if (scanner == &op_scanner) {
+    // handle composite operators by trying different substrings
+    size_t len = strlen(lexeme);
+    for (int i = len - 1; i >= 0; i--) {
+      const char* op_prefix = substring(lexeme, 0, i + 1);
+      TokenType type = lookup_token_type(op_prefix);
+      if (type != INVALID) {
+        tok->token = op_prefix;
+        tok->type = type;
+        free((void*)lexeme);
+        return;
+      } else {
+        free((void*)op_prefix);
+      }
+    }
+    // no valid operator found
+    error_log("Invalid operator at row %u, col %zu\n", row, i);
   } else {
     error_log("No suitable scanner for character at row %u, col %zu (invalid token)\n", row, i);
   }
 }
 
-static Token* construct_token(const char* lexeme, Scanner* scanner, const uint32_t row, const size_t i) {
+static Token* token_from_lexeme(const char* lexeme, Scanner* scanner, const uint32_t row, const size_t i) {
   Token* tok = malloc(sizeof(Token));
   *tok = (Token){ .type = lookup_token_type(lexeme), 
     .token = lexeme, .column = i, .row = row };
 
-  // handle strings, literals, identifiers dynamically (defaulted to INVALID since we don't know yet)
+  // resolve strings, literals, identifiers dynamically 
+  // (defaulted to INVALID since we can't be sure yet)
   if (tok->type == INVALID) {
-    validate_token(scanner, lexeme, tok, row, i);
+    resolve_token(scanner, lexeme, tok, row, i);
   }
   return tok;
 }

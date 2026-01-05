@@ -1,7 +1,7 @@
 #ifndef EXPR_PARSER_H_
 #define EXPR_PARSER_H_
 
-#include "parser/parser_aux.h"
+#include "parser/parse_context.h"
 #include "ast/grammar.h"
 
 Expression *parse_expression(void);

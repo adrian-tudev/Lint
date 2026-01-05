@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "token.h"
+#include "lexer/token.h"
 
 static Expression *expr_alloc(ExpressionKind kind) {
   Expression *e = (Expression *)malloc(sizeof(Expression));
@@ -315,5 +315,29 @@ OperatorKind token_type_to_op(TokenType type) {
     case AND: return OP_AND;
     case OR: return OP_OR;
     default: return (OperatorKind)-1;
+  }
+}
+
+bool is_numerical_op(OperatorKind op) {
+  switch (op) {
+    case OP_AND:
+    case OP_OR:
+    case OP_NOT:
+      return false;
+    default:
+      return true;
+  }
+}
+
+bool is_boolean_op(OperatorKind op) {
+  switch (op) {
+    case OP_AND:
+    case OP_OR:
+    case OP_NOT:
+    case OP_EQUAL:
+    case OP_NOT_EQUAL:
+      return true;
+    default:
+      return false;
   }
 }

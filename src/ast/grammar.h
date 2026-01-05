@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "ast/grammar_types.h"
-#include "token.h"
+#include "lexer/token.h"
 
 // =====================
 // Constructors / destructors
@@ -48,5 +48,8 @@ void program_free(Program *p);
 
 // AUX functions
 OperatorKind token_type_to_op(TokenType type);
+
+bool is_numerical_op(OperatorKind op);
+bool is_boolean_op(OperatorKind op);
 
 #endif // GRAMMAR_H_

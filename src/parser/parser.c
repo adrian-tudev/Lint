@@ -3,9 +3,8 @@
 #include <assert.h>
 
 #include "ast/grammar.h"
-#include "parser/parser_aux.h"
-#include "parser/expr_parser.h"
-#include "token.h"
+#include "parser/expression.h"
+#include "lexer/token.h"
 #include "utils/error.h"
 
 // recursive descent parser

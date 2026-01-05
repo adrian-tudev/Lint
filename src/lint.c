@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #include "parser/parser.h"
-#include "interpreter.h"
-#include "token.h"
+#include "execution/interpreter.h"
+#include "lexer/token.h"
 
 void runFile(const char* path) {
   FILE* file = fopen(path, "r");
@@ -39,6 +39,8 @@ void run(const char* line, uint32_t row) {
         break;
       case EXPR_NUMBER:
         printf("%f\n", result.as.number);
+        break;
+      case EXPR_INVALID:
         break;
       default:
         printf("weird type evaluated\n");

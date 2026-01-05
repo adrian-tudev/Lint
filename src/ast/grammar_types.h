@@ -32,8 +32,9 @@ typedef enum {
   OP_OR,
   OP_NOT,
   OP_EQUAL,
-
   OP_NOT_EQUAL,
+
+  // relational operators
   OP_LESS_THAN,
   OP_LESS_OR_EQUAL,
   OP_GREATER_THAN,

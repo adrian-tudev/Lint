@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "ast/grammar.h"
-#include "interpreter.h"
+#include "execution/interpreter.h"
 
 bool bool_expr(void) {
   bool passed_tests = true;
