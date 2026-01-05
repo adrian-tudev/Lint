@@ -4,26 +4,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "lexer/token_table.h"
 #include "utils/string_utils.h"
 
 char* scan(Scanner scanner, const char* line, uint32_t linePos) {
 
-  size_t i = linePos;
+  size_t col = linePos;
   size_t line_len = strlen(line);
 
   // skip the first character if include_begin is set
-  if (scanner.include_begin && i < line_len) i++;
+  if (scanner.include_begin && col < line_len) col++;
 
-  while (i < line_len && !scanner.end_condition(line[i])) i++;
+  while (col < line_len && !scanner.end_condition(line[col])) col++;
 
-  size_t len = i - linePos;
+  size_t len = col - linePos;
 
   // For single-character tokens where end_condition applies at the start,
   // ensure length is at least 1.
   if (len == 0 && linePos < line_len && scanner.end_condition(line[linePos]))
     len = 1;
 
-  if (scanner.include_end && i != line_len) len++;
+  if (scanner.include_end && col != line_len) len++;
 
   const char* lexeme = substring(line, linePos, len);
   return (char*)lexeme;
@@ -33,7 +34,7 @@ char* scan(Scanner scanner, const char* line, uint32_t linePos) {
 static const char operators[] = "+-*/=<>&|!";
 static const char punctuators[] = "[](){}.,;:";
 
-// Implement scanner condition functions here
+// Implement scanner condition functions
 static bool init_word(const char c) { return isalpha((unsigned char)c) || c == '_'; }
 static bool end_word(const char c) { return !(isalnum((unsigned char)c) || c == '_'); }
 static bool init_literal(const char c) { return isdigit((unsigned char)c) || c == '.' || c == '+' || c == '-'; }
@@ -84,5 +85,4 @@ const Scanner punctuation_scanner = {
 const Scanner* scanners[] = {
   &word_scanner, &literal_scanner, &string_scanner,
   &op_scanner, &punctuation_scanner,
-  NULL // No suitable scanner found
 };

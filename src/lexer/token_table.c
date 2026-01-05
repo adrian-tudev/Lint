@@ -1,15 +1,16 @@
 #include "token_table.h"
 
+#include "utils/string_utils.h"
+
 static const char* token_names[];
 static LookupEntry token_lookup[];
 
 TokenType lookup_token_type(const char* str) {
   for (size_t i = 0; token_lookup[i].lexeme != NULL; i++) {
-    if (strcmp(token_lookup[i].lexeme, str) == 0) {
+    if (strcmp(token_lookup[i].lexeme, str) == 0)
       return token_lookup[i].type;
-    }
   }
-  return INVALID; // default fallback when not recognized
+  return INVALID;
 }
 
 // Returns the string representation of a TokenType
