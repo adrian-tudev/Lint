@@ -22,6 +22,8 @@ bool execute(Program* program) {
   Vector items = program->items;
   for (size_t i = 0; i < items.size; i++) {
     TopLevel* item = (TopLevel*) vec_get(&items, i);
+    // exit if item is malformed
+    if (item == NULL) return false;
     switch (item->kind) {
       case TOP_STATEMENT: {
         Statement* stmt = item->as.statement;
@@ -83,10 +85,14 @@ Expression eval_expression(Expression* expression) {
       return eval_unary_expression(
         *expression->as.unary.operand,
         expression->as.unary.op);
+    case EXPR_IDENTIFIER:
+      printf("not implemented yet\n");
+      break;
     default:
       error_log("Unrecognized expression kind: %d\n", expression->kind);
-      return bool_expr(false);
   }
+  // TODO: return invalid expr
+  return bool_expr(false);
 }
 
 // =====================

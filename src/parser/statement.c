@@ -11,6 +11,7 @@ static Statement *parse_while_statement(void);
 
 Statement *parse_statement(void) {
   const Token *token = peek();
+  if (token == NULL) return NULL;
 
   switch (token->type) {
 
@@ -30,6 +31,8 @@ Statement *parse_statement(void) {
     break;
   case WHILE:
     break;
+
+  // TODO: match against only valid expression symbols
   default: {
     Expression *expr = parse_expression();
     if (expr == NULL) return NULL;
@@ -51,6 +54,10 @@ static Statement *parse_let_statement(void) {
 
   // store the identifier token
   const Token *variable = peek();
+  if (variable == NULL) {
+    error_log("Unexpected end of input after 'let'\n");
+    return NULL;
+  }
   if (match(IDENTIFIER)) {
     // expect '=' token
     if (!match(EQUAL)) {
