@@ -76,7 +76,7 @@ static Expression* parse_binary(Levels level) {
 static Expression* parse_unary(void) {
   const Token* token = peek();
   if (token == NULL) {
-    error_log("Unexpected end of input, expected unary expression.\n");
+    error_log("Unexpected EOF\n");
     return NULL;
   }
   OperatorKind op = token_type_to_op(token->type);
@@ -98,16 +98,20 @@ static Expression* parse_primary(void) {
     Expression* expr = parse_expression();
     if (!match(RIGHT_PARENTHESIS)) {
       if (ctx_end()) {
-        error_log("Expected ')' after expression, but reached end of input.\n");
+        error_log("Expected ')' after expression, but reached EOF.\n");
       } else {
         error_log("Expected ')' after expression, but got '%s'.\n", peek()->token);
       }
       return NULL;
     }
     return expr;
-  } else {
+  } else if (match(RIGHT_PARENTHESIS)) {
+    error_log("Unexpected ')' at %u:%u\n", token->row, token->column);
+    return NULL;
+  }
+  else {
     if (ctx_end()) {
-      error_log("Unexpected end of input, expected an expression.\n");
+      error_log("Unexpected EOF, expected an expression.\n");
     } else {
       error_log("Unexpected token '%s', expected an expression.\n", peek()->token);
     }
