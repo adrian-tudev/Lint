@@ -1,4 +1,6 @@
 #include "execution/interpreter.h"
+
+#include "ast/grammar.h"
 #include "utils/error.h"
 
 // =====================
@@ -7,6 +9,7 @@
 
 static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op);
 static Expression eval_unary_expression(Expression expr, OperatorKind op);
+static bool execute_assignment(Assignment assignment);
 
 static Expression bool_expr(bool value);
 static Expression num(double value);
@@ -46,15 +49,25 @@ bool execute_statement(Statement* statement) {
   StatementKind kind = statement->kind;
   switch (kind) {
     case STMT_EXPR:
-      eval_expression(statement->as.expr);
+      print(eval_expression(statement->as.expr));
       break;
+    case STMT_ASSIGN:
+      execute_assignment(statement->as.assignment);
     default:
       break;
   }
   return true;
 }
 
+// store identifier in table
+static bool execute_assignment(Assignment assignment) {
+  printf("[DEBUG] assigned %s to ", assignment.identifier);
+  print(eval_expression(assignment.rvalue));
+  return true;
+}
+
 Expression eval_expression(Expression* expression) {
+  if (expression == NULL) return bool_expr(false);
   switch (expression->kind) {
     // default datatypes
     case EXPR_NUMBER: case EXPR_BOOL: case EXPR_STRING:
@@ -70,9 +83,8 @@ Expression eval_expression(Expression* expression) {
       return eval_unary_expression(
         *expression->as.unary.operand,
         expression->as.unary.op);
-
     default:
-      error_log("Unrecognized expression kind\n");
+      error_log("Unrecognized expression kind: %d\n", expression->kind);
       return bool_expr(false);
   }
 }

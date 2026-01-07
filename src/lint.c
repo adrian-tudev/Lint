@@ -24,29 +24,12 @@ void runFile(const char* path) {
   fclose(file);
 }
 
+// tokenize, parse into AST, execute
 void run(const char* line, uint32_t row) {
   Vector tokens = tokenize(line, row);
 
-  // for now, just execute expressions
   Program* program = parse(tokens);
-  for (size_t i = 0; i < program->items.size; i++) {
-    Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
-    Expression* expr = stmt->as.expr;
-    Expression result = eval_expression(expr);
-    switch (result.kind) {
-      case EXPR_BOOL:
-        printf("%s\n", (result.as.boolean == 1 ? "true" : "false"));
-        break;
-      case EXPR_NUMBER:
-        printf("%f\n", result.as.number);
-        break;
-      case EXPR_INVALID:
-        break;
-      default:
-        printf("weird type evaluated\n");
-        printf("%d\n", expr->kind);
-    }
-  }
+  execute(program);
 
   program_free(program);
   vec_free(&tokens);
