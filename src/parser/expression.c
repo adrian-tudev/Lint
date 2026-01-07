@@ -3,6 +3,7 @@
 #include "ast/grammar.h"
 #include "utils/error.h"
 
+// precedence levels in increasing order
 typedef enum {
     LEVEL_LOGICAL_OR,
     LEVEL_LOGICAL_AND,
@@ -46,81 +47,74 @@ static const OpPrecedence precedences[] = {
   {ops_factor, 2}
 };
 
-static Expression* parse_binary(Levels level) {
-  if (level == LEVEL_UNARY) {
-    return parse_unary();
+static OperatorKind find_operator_at_level(Levels level) {
+  OpPrecedence prec = precedences[level];
+  for (size_t i = 0; i < prec.count; i++) {
+    if (match_op(prec.ops[i])) {
+      return prec.ops[i];
+    }
   }
+  return OP_INVALID; // no match
+}
+
+static Expression* parse_binary(Levels level) {
+  if (level == LEVEL_UNARY) return parse_unary();
 
   Expression* expr = parse_binary(level + 1);
   if (expr == NULL) return NULL;
 
-  OpPrecedence prec = precedences[level];
   while (true) {
-    bool matched = false;
-    for (size_t i = 0; i < prec.count; i++) {
-      if (match_op(prec.ops[i])) {
-        matched = true;
-        break;
-      }
-    }
-    
-    if (!matched) break;
-
-    OperatorKind op = token_type_to_op(peek()->type);
-    advance();
+    OperatorKind op_kind = find_operator_at_level(level);
+    if (op_kind == OP_INVALID) break;
     Expression* right = parse_binary(level + 1);
-    if (right == NULL) {
-      error_log("Expected expression after binary operator\n");
-      return NULL;
-    }
-    expr = expr_binary(op, expr, right);
+    if (right == NULL) return NULL;
+    expr = expr_binary(op_kind, expr, right);
   }
   return expr;
 }
 
 static Expression* parse_unary(void) {
+  const Token* token = peek();
+  if (token == NULL) {
+    error_log("Unexpected EOF\n");
+    return NULL;
+  }
+  OperatorKind op = token_type_to_op(token->type);
   if (match_op(OP_NOT) || match_op(OP_SUB) || match_op(OP_ADD)) {
-    OperatorKind op = token_type_to_op(peek()->type);
-    advance();
     Expression* operand = parse_unary();
-    if (operand == NULL) {
-      error_log("Expected expression after unary operator\n");
-      return NULL;
-    }
+    if (operand == NULL) return NULL;
     return expr_unary(op, operand);
   }
   return parse_primary();
 }
 
 static Expression* parse_primary(void) {
-  if (match(LITERAL)) {
-    Token* token = peek();
-    advance();
-    Expression* expr = expr_number(token->literal);
-    return expr;
-  } else if (match(TRUE)) {
-    advance();
-    return expr_bool(true);
-  } else if (match(FALSE)) {
-    advance();
-    return expr_bool(false);
-  } else if (match(IDENTIFIER)) {
-    Token* token = peek();
-    advance();
-    Expression* expr = expr_identifier(token->token);
-    return expr;
-  } else if (match(LEFT_PARENTHESIS)) {
-    advance();
+  const Token* token = peek();
+  if (match(LITERAL)) return expr_number(token->literal);
+  else if (match(TRUE)) return expr_bool(true);
+  else if (match(FALSE)) return expr_bool(false);
+  else if (match(IDENTIFIER)) return expr_identifier(token->token);
+  else if (match(LEFT_PARENTHESIS)) {
     Expression* expr = parse_expression();
     if (!match(RIGHT_PARENTHESIS)) {
-      error_log("Expected ')' after expression\n");
+      if (ctx_end()) {
+        error_log("Expected ')' after expression, but reached EOF.\n");
+      } else {
+        error_log("Expected ')' after expression, but got '%s'.\n", peek()->token);
+      }
       return NULL;
     }
-    advance();
     return expr;
-  } else {
-    error_log("Unexpected token\n");
-    if (!ctx_end()) print_token(peek());
+  } else if (match(RIGHT_PARENTHESIS)) {
+    error_log("Unexpected ')' at %u:%u\n", token->row, token->column);
+    return NULL;
+  }
+  else {
+    if (ctx_end()) {
+      error_log("Unexpected EOF, expected an expression.\n");
+    } else {
+      error_log("Unexpected token '%s', expected an expression.\n", peek()->token);
+    }
     return NULL;
   }
 }

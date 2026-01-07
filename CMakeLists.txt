@@ -20,6 +20,14 @@ list(FILTER LIB_SOURCES EXCLUDE REGEX ".*/main.c$")
 # Main executable target
 add_executable(lint ${SRC_SOURCES})
 
+find_library(READLINE_LIBRARY readline)
+if(READLINE_LIBRARY)
+    target_link_libraries(lint PRIVATE ${READLINE_LIBRARY})
+    if(CURSES_LIBRARY)
+        target_link_libraries(lint PRIVATE ${CURSES_LIBRARY})
+    endif()
+endif()
+
 # Test executable target
 add_executable(lint_test ${LIB_SOURCES} ${TEST_SOURCES})
 target_include_directories(lint_test PRIVATE tests)

@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "ast/grammar.h"
-#include "parser/expression.h"
+#include "parser/statement.h"
 #include "lexer/token.h"
 #include "utils/error.h"
 
@@ -13,13 +13,9 @@ Program* parse(Vector tokens) {
 
   Program* program = program_new();
 
-  Expression* expr = parse_expression();
-  if (expr == NULL) {
-    return program;
-  }
+  Statement* stmt = parse_statement();
+  if (stmt == NULL) return program;
 
-  Statement* stmt = stmt_expr(expr);
   program_add_statement(program, stmt);
-
   return program;
 }

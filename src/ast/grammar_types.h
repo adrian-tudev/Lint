@@ -39,6 +39,8 @@ typedef enum {
   OP_LESS_OR_EQUAL,
   OP_GREATER_THAN,
   OP_GREATER_OR_EQUAL,
+
+  OP_INVALID,
 } OperatorKind;
 
 // =====================

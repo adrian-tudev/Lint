@@ -1,8 +1,15 @@
-#define  _POSIX_C_SOURCE 200809L
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <readline/history.h>
+#include <readline/readline.h>
+
+// HACK: readline defines a `RETURN` macro that conflicts with a token
+#ifdef RETURN
+#undef RETURN
+#endif
 
 #include "lint.h"
 
@@ -13,14 +20,13 @@ int main(int argc, char* args[]) {
     return 0;
   }
 
-  while (true) {
-    printf("> ");
-    char* line = NULL;
-    size_t len = 0;
-
-    if (getline(&line, &len, stdin) != -1) {
+  char* line;
+  while ((line = readline("> ")) != NULL) {
+    if (*line) {
+      add_history(line);
       run(line, 0);
     }
+    free(line);
   }
 
   return 0;

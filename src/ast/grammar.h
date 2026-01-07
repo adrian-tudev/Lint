@@ -20,6 +20,7 @@ Expression *expr_identifier(const char *name);
 Expression *expr_string(const char *value);
 Expression *expr_unary(OperatorKind op, Expression *operand);
 Expression *expr_binary(OperatorKind op, Expression *left, Expression *right);
+void print(Expression expression);
 void expr_free(Expression *expr);
 
 Block *block_new(void);

@@ -59,6 +59,21 @@ Expression *expr_binary(OperatorKind op, Expression *left, Expression *right) {
   return e;
 }
 
+void print(Expression expr) {
+  switch (expr.kind) {
+    case EXPR_BOOL:
+      printf("%s\n", (expr.as.boolean == 1 ? "true" : "false"));
+      break;
+    case EXPR_NUMBER:
+      printf("%f\n", expr.as.number);
+      break;
+    case EXPR_INVALID:
+      break;
+    default:
+      printf("weird type evaluated\n");
+  }
+}
+
 void expr_free(Expression *expr) {
   if (!expr) return;
   switch (expr->kind) {
