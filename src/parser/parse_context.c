@@ -15,13 +15,21 @@ void init_parse_context(Vector tokens) {
 bool match_op(OperatorKind op_kind) {
   if (ctx_end()) return false;
   Token* token = (Token*)vec_get(&ctx.tokens, ctx.position);
-  return token_type_to_op(token->type) == op_kind;
+  if (token_type_to_op(token->type) == op_kind) {
+    advance();
+    return true;
+  }
+  return false;
 }
 
 bool match(TokenType type) {
   if (ctx_end()) return false;
   Token* token = (Token*)vec_get(&ctx.tokens, ctx.position);
-  return token->type == type;
+  if (token->type == type) {
+    advance();
+    return true;
+  }
+  return false;
 }
 
 void advance(void) {
@@ -29,7 +37,7 @@ void advance(void) {
   ctx.position++;
 }
 
-Token* peek(void) {
+const Token* peek(void) {
   if (ctx_end()) return NULL;
   return (Token*)vec_get(&ctx.tokens, ctx.position);
 }

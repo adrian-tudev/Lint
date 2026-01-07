@@ -14,9 +14,7 @@ Program* parse(Vector tokens) {
   Program* program = program_new();
 
   Expression* expr = parse_expression();
-  if (expr == NULL) {
-    return program;
-  }
+  if (expr == NULL) return program;
 
   Statement* stmt = stmt_expr(expr);
   program_add_statement(program, stmt);
