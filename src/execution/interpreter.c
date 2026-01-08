@@ -28,7 +28,7 @@ bool execute(Program* program) {
     switch (item->kind) {
       case TOP_STATEMENT: {
         Statement* stmt = item->as.statement;
-        execute_statement(stmt);
+        if (!execute_statement(stmt)) return false;
         break;
       }
       case TOP_FUNCTION: {
@@ -64,9 +64,9 @@ bool execute_statement(Statement* statement) {
       print(eval_expression(statement->as.expr));
       break;
     case STMT_ASSIGN:
-      execute_assignment(statement->as.assignment);
+      return execute_assignment(statement->as.assignment);
     case STMT_IF:
-      execute_if_stmt(statement->as.if_stmt);
+      return execute_if_stmt(statement->as.if_stmt);
     default:
       break;
   }
@@ -84,9 +84,9 @@ static bool execute_if_stmt(IfStmt stmt) {
 
   // IF-ELSE execution
   if (res.as.boolean == 1 && stmt.then_body != NULL)
-    execute_block(stmt.then_body);
+    return execute_block(stmt.then_body);
   else if (res.as.boolean == 0 && stmt.else_body != NULL)
-    execute_block(stmt.else_body);
+    return execute_block(stmt.else_body);
   
   return true;
 }

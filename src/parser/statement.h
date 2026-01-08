@@ -1,5 +1,5 @@
-#ifndef STATEMENT_H_
-#define STATEMENT_H_
+#ifndef PARSER_STATEMENT_H_
+#define PARSER_STATEMENT_H_
 
 #include "parser/parse_context.h"
 #include "ast/grammar.h"
