@@ -94,7 +94,7 @@ void expr_free(Expression *expr) {
   free(expr);
 }
 
-void block_init(Block *block) {
+static void block_init(Block *block) {
   vec_init(&block->statements);
 }
 
@@ -110,7 +110,7 @@ bool block_add(Block *block, Statement *stmt) {
   return vec_push(&block->statements, stmt) != 0;
 }
 
-void block_clear(Block *block) {
+static void block_clear(Block *block) {
   if (!block) return;
   for (size_t i = 0; i < block->statements.size; i++) {
     Statement *stmt = (Statement *)vec_get(&block->statements, i);
@@ -174,12 +174,12 @@ Statement *stmt_while(Expression *condition, Block *body) {
   return s;
 }
 
-// Statement *stmt_block(void) {
-//   Statement *s = stmt_alloc(STMT_BLOCK);
-//   if (!s) return NULL;
-//   block_init(&s->as.block);
-//   return s;
-// }
+Statement *stmt_block(Block *block) {
+  Statement *s = stmt_alloc(STMT_BLOCK);
+  if (!s) return NULL;
+  s->as.block = *block;
+  return s;
+}
 
 void stmt_free(Statement *stmt) {
   if (!stmt) return;
@@ -202,9 +202,9 @@ void stmt_free(Statement *stmt) {
       expr_free(stmt->as.while_stmt.condition);
       block_free(stmt->as.while_stmt.body);
       break;
-    // case STMT_BLOCK:
-    //   block_clear(&stmt->as.block);
-    //   break;
+    case STMT_BLOCK:
+      block_free(&stmt->as.block);
+      break;
     default:
       break;
   }

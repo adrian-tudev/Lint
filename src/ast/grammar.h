@@ -24,9 +24,7 @@ void print(Expression expression);
 void expr_free(Expression *expr);
 
 Block *block_new(void);
-void block_init(Block *block);
 bool block_add(Block *block, Statement *stmt);
-void block_clear(Block *block);
 void block_free(Block *block);
 
 Statement *stmt_expr(Expression *expr);
@@ -34,7 +32,7 @@ Statement *stmt_assign(const char *identifier, Expression *rvalue);
 Statement *stmt_return(Expression *value_or_null);
 Statement *stmt_if(Expression *condition, Block *then_body, Block *else_body_or_null);
 Statement *stmt_while(Expression *condition, Block *body);
-// Statement *stmt_block(void);
+Statement *stmt_block(Block *block);
 void stmt_free(Statement *stmt);
 
 Function *function_new(const char *identifier);

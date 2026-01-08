@@ -116,7 +116,7 @@ typedef enum {
   STMT_RETURN,
   STMT_IF,
   STMT_WHILE,
-  // STMT_BLOCK,
+  STMT_BLOCK,
 } StatementKind;
 
 struct Statement {
@@ -130,7 +130,7 @@ struct Statement {
     ReturnStmt ret;
     IfStmt if_stmt;
     WhileStmt while_stmt;
-    // Block block; // inline block statement
+    Block block; // inline block statement
   } as;
 };
 
