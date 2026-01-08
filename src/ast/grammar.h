@@ -20,7 +20,6 @@ Expression *expr_identifier(const char *name);
 Expression *expr_string(const char *value);
 Expression *expr_unary(OperatorKind op, Expression *operand);
 Expression *expr_binary(OperatorKind op, Expression *left, Expression *right);
-void print(Expression expression);
 void expr_free(Expression *expr);
 
 Block *block_new(void);
@@ -46,7 +45,9 @@ bool program_add_function(Program *p, Function *fn);
 void program_free(Program *p);
 
 // AUX functions
+
 OperatorKind token_type_to_op(TokenType type);
+void print(Expression expression);
 
 bool is_numerical_op(OperatorKind op);
 bool is_boolean_op(OperatorKind op);

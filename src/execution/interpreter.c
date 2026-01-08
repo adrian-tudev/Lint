@@ -51,8 +51,8 @@ bool execute_function_def(Function* function) {
 bool execute_block(Block* block) {
   Vector stmts = block->statements;
   for (size_t i = 0; i < stmts.size; i++) {
-    if (!execute_statement((Statement*)vec_get(&stmts, i)))
-      return false;
+    Statement* stmt = (Statement*) vec_get(&stmts, i);
+    if (!execute_statement(stmt)) return false;
   }
   return true;
 }
@@ -61,7 +61,7 @@ bool execute_statement(Statement* statement) {
   StatementKind kind = statement->kind;
   switch (kind) {
     case STMT_EXPR:
-      print(eval_expression(statement->as.expr));
+      eval_expression(statement->as.expr);
       break;
     case STMT_ASSIGN:
       return execute_assignment(statement->as.assignment);
