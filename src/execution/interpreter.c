@@ -10,6 +10,7 @@
 static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op);
 static Expression eval_unary_expression(Expression expr, OperatorKind op);
 static bool execute_assignment(Assignment assignment);
+static bool execute_if_stmt(IfStmt stmt);
 
 static Expression bool_expr(bool value);
 static Expression num(double value);
@@ -47,6 +48,15 @@ bool execute_function_def(Function* function) {
   return true;
 }
 
+bool execute_block(Block* block) {
+  Vector stmts = block->statements;
+  for (size_t i = 0; i < stmts.size; i++) {
+    if (!execute_statement((Statement*)vec_get(&stmts, i)))
+      return false;
+  }
+  return true;
+}
+
 bool execute_statement(Statement* statement) {
   StatementKind kind = statement->kind;
   switch (kind) {
@@ -55,9 +65,29 @@ bool execute_statement(Statement* statement) {
       break;
     case STMT_ASSIGN:
       execute_assignment(statement->as.assignment);
+    case STMT_IF:
+      execute_if_stmt(statement->as.if_stmt);
     default:
       break;
   }
+  return true;
+}
+
+static bool execute_if_stmt(IfStmt stmt) {
+  Expression* condition = stmt.condition;
+  Expression res = eval_expression(condition);
+
+  if (res.kind != EXPR_BOOL) {
+    error_log("Condition in if statement must be boolean expression!\n");
+    return false;
+  }
+
+  // IF-ELSE execution
+  if (res.as.boolean == 1 && stmt.then_body != NULL)
+    execute_block(stmt.then_body);
+  else if (res.as.boolean == 0 && stmt.else_body != NULL)
+    execute_block(stmt.else_body);
+  
   return true;
 }
 
