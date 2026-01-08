@@ -16,7 +16,7 @@
 int main(int argc, char* args[]) {
   printf("Lint 0.0.1\n");
   if (argc == 2) {
-    runFile(args[1]);
+    run_file(args[1]);
     return 0;
   }
 
@@ -24,7 +24,7 @@ int main(int argc, char* args[]) {
   while ((line = readline("> ")) != NULL) {
     if (*line) {
       add_history(line);
-      run(line, 0);
+      repl(line, 0);
     }
     free(line);
   }

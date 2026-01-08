@@ -3,7 +3,7 @@
 
 #include "lexer/token.h"
 
-void run(const char* line, uint32_t row);
-void runFile(const char* file);
+void repl(const char* line, uint32_t row);
+void run_file(const char* file);
 
 #endif  // LINT_H
