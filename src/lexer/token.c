@@ -46,12 +46,6 @@ Vector tokenize(const char* line, uint32_t row) {
     i += strlen(tok->token) - 1;
   }
 
-  // printf("Tokenized %zu tokens\n", tokens.size);
-  // for (size_t j = 0; j < tokens.size; j++) {
-  //   Token* t = (Token*)vec_get(&tokens, j);
-  //   print_token(t);
-  // }
-
   return tokens;
 }
 
@@ -114,12 +108,15 @@ static void resolve_token(const Scanner* scanner, const char* lexeme, Token* tok
   }
 }
 
-static Token* token_from_lexeme(const char* lexeme, Scanner* scanner, const uint32_t row, const size_t i) {
+static Token* token_from_lexeme(const char* lexeme, Scanner* scanner, 
+    const uint32_t row, const size_t i) {
   Token* tok = malloc(sizeof(Token));
-  *tok = (Token){ .type = lookup_token_type(lexeme), 
-    .token = lexeme, .column = i, .row = row };
+  tok->type = lookup_token_type(lexeme);
+  tok->token = lexeme;
+  tok->column = i;
+  tok->row = row;
 
-  // resolve strings, literals, identifiers dynamically 
+  // resolve strings, literals, identifiers and composite operators dynamically 
   // (defaulted to INVALID since we can't be sure yet)
   if (tok->type == INVALID) {
     resolve_token(scanner, lexeme, tok, row, i);
@@ -130,8 +127,7 @@ static Token* token_from_lexeme(const char* lexeme, Scanner* scanner, const uint
 static bool is_valid_string(const char* str) {
   size_t len = strlen(str);
   if (len < 2) return false;
-  if (str[0] != '"' || str[len - 1] != '"') return false;
-  return true;
+  return str[0] == '"' && str[len - 1] == '"';
 }
 
 static bool is_valid_literal(const char* str) {
@@ -147,3 +143,4 @@ static bool is_valid_literal(const char* str) {
   }
   return true;
 }
+
