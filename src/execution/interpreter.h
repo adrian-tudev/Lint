@@ -9,6 +9,4 @@ bool execute_function_def(Function* function);
 bool execute_statement(Statement* statement);
 bool execute_block(Block* block);
 
-Expression eval_expression(Expression* expression);
-
 #endif // INTERPRETER_H_

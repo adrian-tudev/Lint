@@ -2,6 +2,7 @@
 
 #include "parser/parser.h"
 #include "execution/interpreter.h"
+#include "execution/eval.h"
 
 bool bool_expr_parsing(void) {
   bool passed_tests = true;

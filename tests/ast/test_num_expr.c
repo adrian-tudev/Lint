@@ -2,6 +2,7 @@
 
 #include "ast/grammar.h"
 #include "execution/interpreter.h"
+#include "execution/eval.h"
 
 // test numeric expressions in the AST
 bool num_expr(void) {

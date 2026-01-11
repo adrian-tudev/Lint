@@ -2,6 +2,7 @@
 
 #include "ast/grammar.h"
 #include "execution/interpreter.h"
+#include "execution/eval.h"
 
 // check type mismatches in expressions
 bool type_mismatch(void) {
