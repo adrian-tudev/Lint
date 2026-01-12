@@ -1,5 +1,6 @@
 #include "hashmap.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -190,4 +191,31 @@ bool hm_delete(HashMap* map, const char* key) {
     }
     
     return false;
+}
+
+void hm_print(const HashMap* map) {
+    if (map == NULL) {
+        printf("HashMap: (null)\n");
+        return;
+    }
+    printf("HashMap { count: %zu, capacity: %zu }\n", map->count, map->capacity);
+    for (size_t i = 0; i < map->capacity; i++) {
+        Entry* entry = map->buckets[i];
+        while (entry != NULL) {
+            printf("  \"%s\" => ", entry->key);
+            switch (entry->value->type) {
+                case VAL_BOOL:
+                    printf("%s", entry->value->as.boolean ? "true" : "false");
+                    break;
+                case VAL_INT:
+                    printf("%ld", entry->value->as.integer);
+                    break;
+                case VAL_STRING:
+                    printf("\"%s\"", entry->value->as.string);
+                    break;
+            }
+            printf("\n");
+            entry = entry->next;
+        }
+    }
 }

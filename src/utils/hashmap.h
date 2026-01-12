@@ -25,4 +25,7 @@ Value* hm_get(const HashMap* map, const char* key);
 // Returns true if a value was removed.
 bool hm_delete(HashMap* map, const char* key);
 
+// Prints all key-value pairs in the hashmap for debugging.
+void hm_print(const HashMap* map);
+
 #endif // HASHMAP_H_
