@@ -13,9 +13,13 @@ Program* parse(Vector tokens) {
 
   Program* program = program_new();
 
-  Statement* stmt = parse_statement();
-  if (stmt == NULL) return program;
+  Statement* stmt = NULL;
+    
+  while (true) {
+    stmt = parse_statement();
+    if (stmt == NULL) break;
+    program_add_statement(program, stmt);
+  }
 
-  program_add_statement(program, stmt);
   return program;
 }
