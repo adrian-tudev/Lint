@@ -96,6 +96,7 @@ void expr_free(Expression *expr) {
 
 static void block_init(Block *block) {
   vec_init(&block->statements);
+  block->ctx = hm_create();
 }
 
 Block *block_new(void) {
@@ -117,6 +118,7 @@ static void block_clear(Block *block) {
     stmt_free(stmt);
   }
   vec_free(&block->statements);
+  hm_free(block->ctx);
 }
 
 void block_free(Block *block) {
@@ -177,7 +179,7 @@ Statement *stmt_while(Expression *condition, Block *body) {
 Statement *stmt_block(Block *block) {
   Statement *s = stmt_alloc(STMT_BLOCK);
   if (!s) return NULL;
-  s->as.block = *block;
+  s->as.block = block;
   return s;
 }
 
@@ -203,7 +205,7 @@ void stmt_free(Statement *stmt) {
       block_free(stmt->as.while_stmt.body);
       break;
     case STMT_BLOCK:
-      block_free(&stmt->as.block);
+      block_free(stmt->as.block);
       break;
     default:
       break;
@@ -241,6 +243,7 @@ Program *program_new(void) {
   Program *p = (Program *)malloc(sizeof(Program));
   if (!p) return NULL;
   vec_init(&p->items);
+  p->ctx = hm_create();
   return p;
 }
 
@@ -275,6 +278,7 @@ void program_free(Program *p) {
     free(t);
   }
   vec_free(&p->items);
+  hm_free(p->ctx);
   free(p);
 }
 

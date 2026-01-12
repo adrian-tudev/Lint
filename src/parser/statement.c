@@ -17,16 +17,7 @@ static Block *statement_to_block(Statement *stmt) {
   
   // If it's already a block statement, unwrap it to get the Block content
   if (stmt->kind == STMT_BLOCK) {
-    // We manually allocate the Block struct to avoid initializing (and leaking)
-    // a new vector via block_new() -> vec_init().
-    Block *blk = (Block *)malloc(sizeof(Block));
-    if (blk == NULL) {
-      free(stmt); // Avoid leak of stmt if allocation fails
-      return NULL;
-    }
-
-    *blk = stmt->as.block;
-    // Free the statement wrapper, but NOT the block content (since we moved it)
+    Block *blk = stmt->as.block;
     free(stmt); 
     return blk;
   }
@@ -107,7 +98,7 @@ static Statement *parse_block_statement(void) {
     block_add(block, stmt);
   }
   Statement *s = stmt_block(block);
-  free(block); // stmt_block copies the content, so we free the container
+  // Do NOT free block here, as stmt_block now takes ownership of the pointer.
   return s;
 }
 

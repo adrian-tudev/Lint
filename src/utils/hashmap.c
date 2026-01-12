@@ -54,7 +54,7 @@ static void free_entry(Entry* entry) {
     free(entry);
 }
 
-HashMap* hm_create() {
+HashMap* hm_create(void) {
     HashMap* map = malloc(sizeof(HashMap));
     if (map == NULL) return NULL;
     map->count = 0;

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "utils/hashmap.h"
 #include "utils/vector.h"
 
 // =====================
@@ -94,9 +95,12 @@ typedef struct {
   Expression *value;
 } ReturnStmt;
 
+// a block is statements nested inside curly brackets
+// with its own context scope
 struct Block {
   // Vector<Statement*>
   Vector statements;
+  HashMap* ctx;
 };
 
 typedef struct {
@@ -130,7 +134,7 @@ struct Statement {
     ReturnStmt ret;
     IfStmt if_stmt;
     WhileStmt while_stmt;
-    Block block; // inline block statement
+    Block *block; // inline block statement
   } as;
 };
 
@@ -161,6 +165,8 @@ typedef struct {
 struct Program {
   // Vector<TopLevel*>
   Vector items;
+  // global scope
+  HashMap* ctx;
 };
 
 

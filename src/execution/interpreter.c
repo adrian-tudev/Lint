@@ -9,8 +9,9 @@
 // Prototypes
 // =====================
 
-static bool execute_assignment(Assignment assignment);
+static bool execute_assignment(Assignment assignment, HashMap* ctx);
 static bool execute_if_stmt(IfStmt stmt);
+static bool execute_while_stmt(WhileStmt loop);
 
 // =====================
 // Public Functions
@@ -25,7 +26,7 @@ bool execute(Program* program) {
     switch (item->kind) {
       case TOP_STATEMENT: {
         Statement* stmt = item->as.statement;
-        if (!execute_statement(stmt)) return false;
+        if (!execute_statement(stmt, program->ctx)) return false;
         break;
       }
       case TOP_FUNCTION: {
@@ -49,21 +50,25 @@ bool execute_block(Block* block) {
   Vector stmts = block->statements;
   for (size_t i = 0; i < stmts.size; i++) {
     Statement* stmt = (Statement*) vec_get(&stmts, i);
-    if (!execute_statement(stmt)) return false;
+    if (!execute_statement(stmt, block->ctx)) return false;
   }
   return true;
 }
 
-bool execute_statement(Statement* statement) {
+bool execute_statement(Statement* statement, HashMap* scope) {
   StatementKind kind = statement->kind;
   switch (kind) {
     case STMT_EXPR:
       eval_expression(statement->as.expr);
       break;
     case STMT_ASSIGN:
-      return execute_assignment(statement->as.assignment);
+      return execute_assignment(statement->as.assignment, scope);
     case STMT_IF:
       return execute_if_stmt(statement->as.if_stmt);
+    case STMT_WHILE:
+      return execute_while_stmt(statement->as.while_stmt);
+    case STMT_BLOCK:
+      return execute_block(statement->as.block);
     default:
       break;
   }
@@ -89,9 +94,29 @@ static bool execute_if_stmt(IfStmt stmt) {
 }
 
 // store identifier in table
-static bool execute_assignment(Assignment assignment) {
+static bool execute_assignment(Assignment assignment, HashMap* ctx) {
+  Expression res = eval_expression(assignment.rvalue);
+  Value* val;
+  switch (res.kind) {
+    case EXPR_BOOL:
+      val = new_bool_value(res.as.boolean);
+      break;
+    case EXPR_NUMBER:
+      val = new_int_value(res.as.number);
+      break;
+    case EXPR_STRING:
+      val = new_string_value(res.as.string);
+      break;
+    default:
+      error_log("expected expression on assignment\n");
+      return false;
+  }
+  hm_set(ctx, assignment.identifier, val);
   printf("[DEBUG] assigned %s to ", assignment.identifier);
-  print(eval_expression(assignment.rvalue));
+  print(res);
   return true;
 }
 
+static bool execute_while_stmt(WhileStmt loop) {
+  return false;
+}

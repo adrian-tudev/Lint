@@ -6,7 +6,7 @@
 
 typedef struct HashMap HashMap;
 
-HashMap* hm_create();
+HashMap* hm_create(void);
 void hm_free(HashMap* map);
 
 // Associates the specified value with the specified key in this map.
