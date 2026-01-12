@@ -52,4 +52,11 @@ void print(Expression expression);
 bool is_numerical_op(OperatorKind op);
 bool is_boolean_op(OperatorKind op);
 
+// AST printing functions
+void ast_print_expr(const Expression *expr, int indent);
+void ast_print_stmt(const Statement *stmt, int indent);
+void ast_print_block(const Block *block, int indent);
+void ast_print_function(const Function *fn, int indent);
+void ast_print_program(const Program *p);
+
 #endif // GRAMMAR_H_

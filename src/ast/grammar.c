@@ -360,3 +360,169 @@ bool is_boolean_op(OperatorKind op) {
       return false;
   }
 }
+
+// =====================
+// AST Printing
+// =====================
+
+static void print_indent(int indent) {
+  for (int i = 0; i < indent; i++) printf("  ");
+}
+
+static const char* op_to_string(OperatorKind op) {
+  switch (op) {
+    case OP_ADD: return "+";
+    case OP_SUB: return "-";
+    case OP_MUL: return "*";
+    case OP_DIV: return "/";
+    case OP_AND: return "&&";
+    case OP_OR: return "||";
+    case OP_NOT: return "!";
+    case OP_EQUAL: return "==";
+    case OP_NOT_EQUAL: return "!=";
+    case OP_LESS_THAN: return "<";
+    case OP_LESS_OR_EQUAL: return "<=";
+    case OP_GREATER_THAN: return ">";
+    case OP_GREATER_OR_EQUAL: return ">=";
+    default: return "?";
+  }
+}
+
+void ast_print_expr(const Expression *expr, int indent) {
+  if (!expr) {
+    print_indent(indent);
+    printf("(null)\n");
+    return;
+  }
+  print_indent(indent);
+  switch (expr->kind) {
+    case EXPR_NUMBER:
+      printf("Number(%g)\n", expr->as.number);
+      break;
+    case EXPR_BOOL:
+      printf("Bool(%s)\n", expr->as.boolean ? "true" : "false");
+      break;
+    case EXPR_IDENTIFIER:
+      printf("Identifier(%s)\n", expr->as.identifier);
+      break;
+    case EXPR_STRING:
+      printf("String(\"%s\")\n", expr->as.string);
+      break;
+    case EXPR_UNARY:
+      printf("Unary(%s)\n", op_to_string(expr->as.unary.op));
+      ast_print_expr(expr->as.unary.operand, indent + 1);
+      break;
+    case EXPR_BINARY:
+      printf("Binary(%s)\n", op_to_string(expr->as.binary.op));
+      ast_print_expr(expr->as.binary.left, indent + 1);
+      ast_print_expr(expr->as.binary.right, indent + 1);
+      break;
+    case EXPR_INVALID:
+      printf("Invalid\n");
+      break;
+  }
+}
+
+void ast_print_stmt(const Statement *stmt, int indent) {
+  if (!stmt) {
+    print_indent(indent);
+    printf("(null)\n");
+    return;
+  }
+  print_indent(indent);
+  switch (stmt->kind) {
+    case STMT_EXPR:
+      printf("ExprStmt\n");
+      ast_print_expr(stmt->as.expr, indent + 1);
+      break;
+    case STMT_ASSIGN:
+      printf("Assign(%s)\n", stmt->as.assignment.identifier);
+      ast_print_expr(stmt->as.assignment.rvalue, indent + 1);
+      break;
+    case STMT_RETURN:
+      printf("Return\n");
+      if (stmt->as.ret.has_value) {
+        ast_print_expr(stmt->as.ret.value, indent + 1);
+      }
+      break;
+    case STMT_IF:
+      printf("If\n");
+      print_indent(indent + 1);
+      printf("condition:\n");
+      ast_print_expr(stmt->as.if_stmt.condition, indent + 2);
+      print_indent(indent + 1);
+      printf("then:\n");
+      ast_print_block(stmt->as.if_stmt.then_body, indent + 2);
+      if (stmt->as.if_stmt.else_body) {
+        print_indent(indent + 1);
+        printf("else:\n");
+        ast_print_block(stmt->as.if_stmt.else_body, indent + 2);
+      }
+      break;
+    case STMT_WHILE:
+      printf("While\n");
+      print_indent(indent + 1);
+      printf("condition:\n");
+      ast_print_expr(stmt->as.while_stmt.condition, indent + 2);
+      print_indent(indent + 1);
+      printf("body:\n");
+      ast_print_block(stmt->as.while_stmt.body, indent + 2);
+      break;
+    case STMT_BLOCK:
+      printf("Block\n");
+      ast_print_block(stmt->as.block, indent + 1);
+      break;
+  }
+}
+
+void ast_print_block(const Block *block, int indent) {
+  if (!block) {
+    print_indent(indent);
+    printf("(null)\n");
+    return;
+  }
+  for (size_t i = 0; i < block->statements.size; i++) {
+    Statement *stmt = (Statement *)vec_get(&block->statements, i);
+    ast_print_stmt(stmt, indent);
+  }
+}
+
+void ast_print_function(const Function *fn, int indent) {
+  if (!fn) {
+    print_indent(indent);
+    printf("(null)\n");
+    return;
+  }
+  print_indent(indent);
+  printf("Function(%s)\n", fn->identifier);
+  print_indent(indent + 1);
+  printf("params: [");
+  for (size_t i = 0; i < fn->params.size; i++) {
+    if (i > 0) printf(", ");
+    printf("%s", (const char *)vec_get(&fn->params, i));
+  }
+  printf("]\n");
+  print_indent(indent + 1);
+  printf("body:\n");
+  ast_print_block(&fn->body, indent + 2);
+}
+
+void ast_print_program(const Program *p) {
+  if (!p) {
+    printf("Program: (null)\n");
+    return;
+  }
+  printf("Program\n");
+  for (size_t i = 0; i < p->items.size; i++) {
+    TopLevel *item = (TopLevel *)vec_get(&p->items, i);
+    if (!item) continue;
+    switch (item->kind) {
+      case TOP_STATEMENT:
+        ast_print_stmt(item->as.statement, 1);
+        break;
+      case TOP_FUNCTION:
+        ast_print_function(item->as.function, 1);
+        break;
+    }
+  }
+}
