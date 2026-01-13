@@ -55,6 +55,13 @@ void print_token(Token* token) {
          token->row, token->column, type_name, token->token);
 }
 
+void print_tokens(const Vector tokens) {
+  for (size_t i = 0; i < tokens.size; i++) {
+    Token* tok = (Token*) vec_get(&tokens, i);
+    print_token(tok);
+  }
+}
+
 // =====================
 // Private Functions
 // =====================

@@ -25,6 +25,9 @@ typedef struct Token {
 } Token;
 
 Vector tokenize(const char* line, const uint32_t row);
+
+// print tokens for debugging
 void print_token(Token* token);
+void print_tokens(const Vector tokens);
 
 #endif  // TOKEN_H_
