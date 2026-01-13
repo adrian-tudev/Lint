@@ -82,24 +82,24 @@ static void resolve_token(const Scanner* scanner, const char* lexeme, Token* tok
     if (!is_valid_string(lexeme)) {
       error_log("Unterminated string at row %u, col %zu\n", row, i);
     }
-    tok->type = STRING;
+    tok->type = TOK_STRING;
   } else if (scanner == &literal_scanner) {
     if (!is_valid_literal(lexeme)) {
       error_log("Invalid literal format at row %u, col %zu\n", row, i);
     }
     // TODO: handle ascii to float conversion failure
     tok->literal = atof(lexeme);
-    tok->type = LITERAL;
+    tok->type = TOK_LITERAL;
   } else if (scanner == &word_scanner) {
     // word scanner is guaranteed to produce valid identifiers
-    tok->type = IDENTIFIER;
+    tok->type = TOK_IDENTIFIER;
   } else if (scanner == &op_scanner) {
     // handle composite operators by trying different substrings
     size_t len = strlen(lexeme);
     for (int i = len - 1; i >= 0; i--) {
       const char* op_prefix = substring(lexeme, 0, i + 1);
       TokenType type = lookup_token_type(op_prefix);
-      if (type != INVALID) {
+      if (type != TOK_INVALID) {
         tok->token = op_prefix;
         tok->type = type;
         free((void*)lexeme);
@@ -124,8 +124,8 @@ static Token* token_from_lexeme(const char* lexeme, Scanner* scanner,
   tok->row = row;
 
   // resolve strings, literals, identifiers and composite operators dynamically 
-  // (defaulted to INVALID since we can't be sure yet)
-  if (tok->type == INVALID) {
+  // (defaulted to TOK_INVALID since we can't be sure yet)
+  if (tok->type == TOK_INVALID) {
     resolve_token(scanner, lexeme, tok, row, i);
   }
   return tok;

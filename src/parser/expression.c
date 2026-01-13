@@ -90,13 +90,13 @@ static Expression* parse_unary(void) {
 
 static Expression* parse_primary(void) {
   const Token* token = peek();
-  if (match(LITERAL)) return expr_number(token->literal);
-  else if (match(TRUE)) return expr_bool(true);
-  else if (match(FALSE)) return expr_bool(false);
-  else if (match(IDENTIFIER)) return expr_identifier(token->token);
-  else if (match(LEFT_PARENTHESIS)) {
+  if (match(TOK_LITERAL)) return expr_number(token->literal);
+  else if (match(TOK_TRUE)) return expr_bool(true);
+  else if (match(TOK_FALSE)) return expr_bool(false);
+  else if (match(TOK_IDENTIFIER)) return expr_identifier(token->token);
+  else if (match(TOK_LEFT_PARENTHESIS)) {
     Expression* expr = parse_expression();
-    if (!match(RIGHT_PARENTHESIS)) {
+    if (!match(TOK_RIGHT_PARENTHESIS)) {
       if (ctx_end()) {
         error_log("Expected ')' after expression, but reached EOF.\n");
       } else {
@@ -105,7 +105,7 @@ static Expression* parse_primary(void) {
       return NULL;
     }
     return expr;
-  } else if (match(RIGHT_PARENTHESIS)) {
+  } else if (match(TOK_RIGHT_PARENTHESIS)) {
     error_log("Unexpected ')' at %u:%u\n", token->row, token->column);
     return NULL;
   }

@@ -34,34 +34,34 @@ Statement *parse_statement(void) {
 
   switch (token->type) {
 
-  case LET:
+  case TOK_LET:
     return parse_assignment_statement();
-  case RETURN:
+  case TOK_RETURN:
     break;
 
   // if parses if/elif/else statements
-  case IF:
+  case TOK_IF:
     return parse_if_statement();
     break;
 
-  case FOR:
+  case TOK_FOR:
     break;
-  case WHILE:
+  case TOK_WHILE:
     break;
   
-  case LEFT_BRACE:
+  case TOK_LEFT_BRACE:
     return parse_block_statement();
     break;
   
   // TODO: handle identifier as start of assignment statement or expression
-  case IDENTIFIER:
+  case TOK_IDENTIFIER:
     break;
 
   // TODO: match against only valid expression symbols
   default: {
     Expression *expr = parse_expression();
     if (expr == NULL) return NULL;
-    if (!match(SEMICOLON)) {
+    if (!match(TOK_SEMICOLON)) {
       error_log("Expected ';' after expression\n");
       return NULL;
     }
@@ -74,7 +74,7 @@ Statement *parse_statement(void) {
 }
 
 static Statement *parse_block_statement(void) {
-  assert(match(LEFT_BRACE));
+  assert(match(TOK_LEFT_BRACE));
   Block *block = block_new();
   while (true) {
     const Token *token = peek();
@@ -83,8 +83,8 @@ static Statement *parse_block_statement(void) {
       block_free(block);
       return NULL;
     }
-    if (token->type == RIGHT_BRACE) {
-      match(RIGHT_BRACE);
+    if (token->type == TOK_RIGHT_BRACE) {
+      match(TOK_RIGHT_BRACE);
       break;
     }
 
@@ -104,7 +104,7 @@ static Statement *parse_block_statement(void) {
 
 static Statement *parse_assignment_statement(void) {
   // guarantee we have 'let' token
-  assert(match(LET));
+  assert(match(TOK_LET));
 
   // store the identifier token
   const Token *variable = peek();
@@ -112,9 +112,9 @@ static Statement *parse_assignment_statement(void) {
     error_log("Unexpected end of input after 'let'\n");
     return NULL;
   }
-  if (match(IDENTIFIER)) {
+  if (match(TOK_IDENTIFIER)) {
     // expect '=' token
-    if (!match(EQUAL)) {
+    if (!match(TOK_EQUAL)) {
       error_log("Expected '=' after identifier in let statement at %u:%u\n",
                 variable->row, variable->column);
       return NULL;
@@ -129,7 +129,7 @@ static Statement *parse_assignment_statement(void) {
     }
 
     // expect ';' token
-    if (!match(SEMICOLON)) {
+    if (!match(TOK_SEMICOLON)) {
       error_log("Expected ';' after expression in let statement at %u:%u\n",
                 variable->row, variable->column);
       return NULL;
@@ -145,9 +145,9 @@ static Statement *parse_assignment_statement(void) {
 }
 
 static Statement* parse_if_statement(void) {
-  assert(match(IF));
+  assert(match(TOK_IF));
 
-  if (match(LEFT_PARENTHESIS)) {
+  if (match(TOK_LEFT_PARENTHESIS)) {
     // condition
     Expression* condition = parse_expression();
     if (condition == NULL) {
@@ -155,7 +155,7 @@ static Statement* parse_if_statement(void) {
       return NULL;
     }
 
-    if (!match(RIGHT_PARENTHESIS)) {
+    if (!match(TOK_RIGHT_PARENTHESIS)) {
       error_log("Expected ')' after condition in if statement\n");
       return NULL;
     }
@@ -168,7 +168,7 @@ static Statement* parse_if_statement(void) {
     Block* then_body = statement_to_block(then_stmt);
 
     Block* else_body = NULL;
-    if (match(ELSE)) {
+    if (match(TOK_ELSE)) {
       Statement* else_stmt = parse_block_statement();
       if (else_stmt == NULL) {
         error_log("Expected block statement after else\n");

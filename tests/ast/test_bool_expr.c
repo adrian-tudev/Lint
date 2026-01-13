@@ -19,7 +19,7 @@ bool bool_expr(void) {
 
     Expression* and_expr = expr_binary(OP_AND, l, r);
 
-    Expression result = eval_expression(and_expr);
+    Expression result = eval_expression(and_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     passed_tests &= test_assert(result.as.boolean == false, "true AND false should be false");
 
@@ -32,7 +32,7 @@ bool bool_expr(void) {
 
     Expression* or_expr = expr_binary(OP_OR, l, r);
 
-    Expression result = eval_expression(or_expr);
+    Expression result = eval_expression(or_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     passed_tests &= test_assert(result.as.boolean == true, "true OR false should be true");
 
@@ -44,7 +44,7 @@ bool bool_expr(void) {
 
     Expression* not_expr = expr_unary(OP_NOT, operand);
 
-    Expression result = eval_expression(not_expr);
+    Expression result = eval_expression(not_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     passed_tests &= test_assert(result.as.boolean == true, "NOT false should be true");
 
@@ -56,7 +56,7 @@ bool bool_expr(void) {
     Expression* l = expr_bool(true);
     Expression* r = expr_bool(true);
     Expression* equal_expr = expr_binary(OP_EQUAL, l, r);
-    Expression result = eval_expression(equal_expr);
+    Expression result = eval_expression(equal_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     passed_tests &= test_assert(result.as.boolean == true, "true EQUAL true should be true");
     expr_free(equal_expr);
@@ -67,7 +67,7 @@ bool bool_expr(void) {
     Expression* left = expr_binary(OP_OR, expr_bool(true), expr_bool(false));
     Expression* right = expr_unary(OP_NOT, expr_bool(false));
     Expression* complex_expr = expr_binary(OP_AND, left, right);
-    Expression result = eval_expression(complex_expr);
+    Expression result = eval_expression(complex_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     passed_tests &= test_assert(result.as.boolean == true, "(true OR false) AND (NOT false) should be true");
     expr_free(complex_expr);
@@ -78,7 +78,7 @@ bool bool_expr(void) {
     Expression* l = expr_number(3);
     Expression* r = expr_number(5);
     Expression* less_than_expr = expr_binary(OP_LESS_THAN, l, r);
-    Expression result = eval_expression(less_than_expr);
+    Expression result = eval_expression(less_than_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     passed_tests &= test_assert(result.as.boolean == true, "3 LESS_THAN 5 should be true");
     expr_free(less_than_expr);

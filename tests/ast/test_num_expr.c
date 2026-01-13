@@ -21,7 +21,7 @@ bool num_expr(void) {
 
     Expression* addition = expr_binary(OP_ADD, l, r);
 
-    Expression result = eval_expression(addition);
+    Expression result = eval_expression(addition, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == 3, "1 + 2 should equal 3");
 
@@ -35,7 +35,7 @@ bool num_expr(void) {
 
     Expression* subtraction = expr_binary(OP_SUB, l, r);
 
-    Expression result = eval_expression(subtraction);
+    Expression result = eval_expression(subtraction, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == 2, "5 - 3 should equal 2");
 
@@ -49,7 +49,7 @@ bool num_expr(void) {
 
     Expression* multiplication = expr_binary(OP_MUL, l, r);
 
-    Expression result = eval_expression(multiplication);
+    Expression result = eval_expression(multiplication, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == 12, "4 * 3 should equal 12");
 
@@ -63,7 +63,7 @@ bool num_expr(void) {
 
     Expression* division = expr_binary(OP_DIV, l, r);
 
-    Expression result = eval_expression(division);
+    Expression result = eval_expression(division, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == 5, "10 / 2 should equal 5");
 
@@ -78,7 +78,7 @@ bool num_expr(void) {
     Expression* division = expr_binary(OP_DIV, l, r);
 
     // expect an error log for division by zero
-    Expression result = eval_expression(division);
+    Expression result = eval_expression(division, NULL);
     // result is undefined, interpreter should have logged an error and return false
     passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
@@ -90,7 +90,7 @@ bool num_expr(void) {
     Expression *l = expr_number(1.5);
     Expression *r = expr_number(2.5);
     Expression *addition = expr_binary(OP_ADD, l, r);
-    Expression result = eval_expression(addition);
+    Expression result = eval_expression(addition, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == 4.0, "1.5 + 2.5 should equal 4.0");
     expr_free(addition);
@@ -105,7 +105,7 @@ bool num_expr(void) {
     Expression* one_again = expr_number(1);
     Expression* three_minus_one = expr_binary(OP_SUB, three, one_again);
     Expression* complex_expr = expr_binary(OP_MUL, one_plus_two, three_minus_one);
-    Expression result = eval_expression(complex_expr);
+    Expression result = eval_expression(complex_expr, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == 6, "(1 + 2) * (3 - 1) should equal 6");
     expr_free(complex_expr);
@@ -115,7 +115,7 @@ bool num_expr(void) {
     // unary operation: negation
     Expression* five = expr_number(5);
     Expression* negation = expr_unary(OP_SUB, five);
-    Expression result = eval_expression(negation);
+    Expression result = eval_expression(negation, NULL);
     passed_tests &= test_assert(result.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     passed_tests &= test_assert(result.as.number == -5, "-5 should equal -5");
     expr_free(negation);

@@ -14,7 +14,7 @@ bool unary_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 5.0, "--5 should equal 5.0");
@@ -28,7 +28,7 @@ bool unary_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 5.5, "5+-(-.5) should equal 5.5");
@@ -42,7 +42,7 @@ bool unary_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 5.0, "5++-(-0) should equal 5.0");

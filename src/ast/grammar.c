@@ -320,19 +320,19 @@ void print_expression(Expression *expr) {
 
 OperatorKind token_type_to_op(TokenType type) {
   switch (type) {
-    case PLUS: return OP_ADD;
-    case MINUS: return OP_SUB;
-    case STAR: return OP_MUL;
-    case SLASH: return OP_DIV;
-    case BANG: return OP_NOT;
-    case EQUAL_EQUAL: return OP_EQUAL;
-    case BANG_EQUAL: return OP_NOT_EQUAL;
-    case LESS: return OP_LESS_THAN;
-    case LESS_EQUAL: return OP_LESS_OR_EQUAL;
-    case GREATER: return OP_GREATER_THAN;
-    case GREATER_EQUAL: return OP_GREATER_OR_EQUAL;
-    case AND: return OP_AND;
-    case OR: return OP_OR;
+    case TOK_PLUS: return OP_ADD;
+    case TOK_MINUS: return OP_SUB;
+    case TOK_STAR: return OP_MUL;
+    case TOK_SLASH: return OP_DIV;
+    case TOK_BANG: return OP_NOT;
+    case TOK_EQUAL_EQUAL: return OP_EQUAL;
+    case TOK_BANG_EQUAL: return OP_NOT_EQUAL;
+    case TOK_LESS: return OP_LESS_THAN;
+    case TOK_LESS_EQUAL: return OP_LESS_OR_EQUAL;
+    case TOK_GREATER: return OP_GREATER_THAN;
+    case TOK_GREATER_EQUAL: return OP_GREATER_OR_EQUAL;
+    case TOK_AND: return OP_AND;
+    case TOK_OR: return OP_OR;
     default: return (OperatorKind)-1;
   }
 }

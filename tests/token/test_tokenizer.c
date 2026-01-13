@@ -37,7 +37,7 @@ bool tokenizer_test(void) {
   {
     const char *input = "let x = 123 + 4.5;";
     const TokenType types[] = {
-      LET, IDENTIFIER, EQUAL, LITERAL, PLUS, LITERAL, SEMICOLON
+      TOK_LET, TOK_IDENTIFIER, TOK_EQUAL, TOK_LITERAL, TOK_PLUS, TOK_LITERAL, TOK_SEMICOLON
     };
     const char *lexemes[] = {
       "let", "x", "=", "123", "+", "4.5", ";"
@@ -49,7 +49,7 @@ bool tokenizer_test(void) {
   {
     const char *input = "print(\"hi\")";
     const TokenType types[] = {
-      IDENTIFIER, LEFT_PARENTHESIS, STRING, RIGHT_PARENTHESIS
+      TOK_IDENTIFIER, TOK_LEFT_PARENTHESIS, TOK_STRING, TOK_RIGHT_PARENTHESIS
     };
     const char *lexemes[] = {
       "print", "(", "\"hi\"", ")"
@@ -61,7 +61,7 @@ bool tokenizer_test(void) {
   {
     const char *input = "if a >= 10 && b != 0 { }";
     const TokenType types[] = {
-      IF, IDENTIFIER, GREATER_EQUAL, LITERAL, AND, IDENTIFIER, BANG_EQUAL, LITERAL, LEFT_BRACE, RIGHT_BRACE
+      TOK_IF, TOK_IDENTIFIER, TOK_GREATER_EQUAL, TOK_LITERAL, TOK_AND, TOK_IDENTIFIER, TOK_BANG_EQUAL, TOK_LITERAL, TOK_LEFT_BRACE, TOK_RIGHT_BRACE
     };
     const char *lexemes[] = {
       "if", "a", ">=", "10", "&&", "b", "!=", "0", "{", "}"
@@ -76,7 +76,7 @@ bool tokenizer_error_cases_test(void) {
   // Unterminated string: opening quote without closing
   {
     const char *input = "\"hi";
-    const TokenType types[] = { STRING };
+    const TokenType types[] = { TOK_STRING };
     const char *lexemes[] = { "\"hi" };
     if (!expect_tokens(input, types, lexemes, 1)) return false;
   }
@@ -84,7 +84,7 @@ bool tokenizer_error_cases_test(void) {
   // Invalid literal: multiple dots
   {
     const char *input = "12.34.56";
-    const TokenType types[] = { LITERAL };
+    const TokenType types[] = { TOK_LITERAL };
     const char *lexemes[] = { "12.34.56" };
     if (!expect_tokens(input, types, lexemes, 1)) return false;
   }
@@ -92,7 +92,7 @@ bool tokenizer_error_cases_test(void) {
   // Invalid literal: only dots
   {
     const char *input = "...";
-    const TokenType types[] = { LITERAL };
+    const TokenType types[] = { TOK_LITERAL };
     const char *lexemes[] = { "..." };
     if (!expect_tokens(input, types, lexemes, 1)) return false;
   }
@@ -100,7 +100,7 @@ bool tokenizer_error_cases_test(void) {
   // Mixed number and letters: splits into literal then identifier
   {
     const char *input = "12a3";
-    const TokenType types[] = { LITERAL, IDENTIFIER };
+    const TokenType types[] = { TOK_LITERAL, TOK_IDENTIFIER };
     const char *lexemes[] = { "12", "a3" };
     if (!expect_tokens(input, types, lexemes, 2)) return false;
   }
@@ -108,7 +108,7 @@ bool tokenizer_error_cases_test(void) {
   // Unrecognized character is skipped
   {
     const char *input = "x @ y";
-    const TokenType types[] = { IDENTIFIER, IDENTIFIER };
+    const TokenType types[] = { TOK_IDENTIFIER, TOK_IDENTIFIER };
     const char *lexemes[] = { "x", "y" };
     if (!expect_tokens(input, types, lexemes, 2)) return false;
   }
@@ -138,7 +138,7 @@ bool tokenizer_edge_cases_test(void) {
   // Identifier with underscores and digits
   {
     const char *input = "foo_bar123";
-    const TokenType types[] = { IDENTIFIER };
+    const TokenType types[] = { TOK_IDENTIFIER };
     const char *lexemes[] = { "foo_bar123" };
     if (!expect_tokens(input, types, lexemes, 1)) return false;
   }
@@ -146,7 +146,7 @@ bool tokenizer_edge_cases_test(void) {
   // Numeric edge cases: leading/trailing dot
   {
     const char *input = ".5 12.";
-    const TokenType types[] = { LITERAL, LITERAL };
+    const TokenType types[] = { TOK_LITERAL, TOK_LITERAL };
     const char *lexemes[] = { ".5", "12." };
     if (!expect_tokens(input, types, lexemes, 2)) return false;
   }
@@ -154,7 +154,7 @@ bool tokenizer_edge_cases_test(void) {
   // Multi-character comparison operators
   {
     const char *input = "== <= >= !=";
-    const TokenType types[] = { EQUAL_EQUAL, LESS_EQUAL, GREATER_EQUAL, BANG_EQUAL };
+    const TokenType types[] = { TOK_EQUAL_EQUAL, TOK_LESS_EQUAL, TOK_GREATER_EQUAL, TOK_BANG_EQUAL };
     const char *lexemes[] = { "==", "<=", ">=", "!=" };
     if (!expect_tokens(input, types, lexemes, 4)) return false;
   }
@@ -162,7 +162,7 @@ bool tokenizer_edge_cases_test(void) {
   // Adjacent punctuation
   {
     const char *input = "())";
-    const TokenType types[] = { LEFT_PARENTHESIS, RIGHT_PARENTHESIS, RIGHT_PARENTHESIS };
+    const TokenType types[] = { TOK_LEFT_PARENTHESIS, TOK_RIGHT_PARENTHESIS, TOK_RIGHT_PARENTHESIS };
     const char *lexemes[] = { "(", ")", ")" };
     if (!expect_tokens(input, types, lexemes, 3)) return false;
   }
@@ -173,7 +173,7 @@ bool tokenizer_edge_cases_test(void) {
 bool tokenizer_no_delimiter_expr(void) {
   {
     const char* input = "123+456";
-    const TokenType types[] = { LITERAL, PLUS, LITERAL };
+    const TokenType types[] = { TOK_LITERAL, TOK_PLUS, TOK_LITERAL };
     const char* lexemes[] = { "123", "+", "456" };
     if (!expect_tokens(input, types, lexemes, 3)) return false;
     printf("passed 123+456\n");
@@ -181,7 +181,7 @@ bool tokenizer_no_delimiter_expr(void) {
 
   { // "1<-123"
     const char* input = "1<-123";
-    const TokenType types[] = { LITERAL, LESS, MINUS, LITERAL };
+    const TokenType types[] = { TOK_LITERAL, TOK_LESS, TOK_MINUS, TOK_LITERAL };
     const char* lexemes[] = { "1", "<", "-", "123" };
     if (!expect_tokens(input, types, lexemes, 4)) return false;
     printf("passed 1<-123\n");
@@ -189,7 +189,7 @@ bool tokenizer_no_delimiter_expr(void) {
 
   { // true&&!!!false
     const char* input = "true&&!!!false";
-    const TokenType types[] = { TRUE, AND, BANG, BANG, BANG, FALSE };
+    const TokenType types[] = { TOK_TRUE, TOK_AND, TOK_BANG, TOK_BANG, TOK_BANG, TOK_FALSE };
     const char* lexemes[] = { "true", "&&", "!", "!", "!", "false" };
     if (!expect_tokens(input, types, lexemes, 6)) return false;
     printf("passed true&&!!!false\n");
@@ -197,7 +197,7 @@ bool tokenizer_no_delimiter_expr(void) {
 
   { // 1<=+-2
     const char* input = "1<=+-.2";
-    const TokenType types[] = { LITERAL, LESS_EQUAL, PLUS, MINUS, LITERAL };
+    const TokenType types[] = { TOK_LITERAL, TOK_LESS_EQUAL, TOK_PLUS, TOK_MINUS, TOK_LITERAL };
     const char* lexemes[] = { "1", "<=", "+", "-", ".2" };
     if (!expect_tokens(input, types, lexemes, 5)) return false;
     printf("passed 1<=+-2\n");

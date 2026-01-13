@@ -15,7 +15,7 @@ bool type_mismatch(void) {
 
         Expression* addition = expr_binary(OP_ADD, l, r);
 
-        Expression result = eval_expression(addition);
+        Expression result = eval_expression(addition, NULL);
         passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
         expr_free(addition);
@@ -28,7 +28,7 @@ bool type_mismatch(void) {
 
         Expression* comparison = expr_binary(OP_LESS_THAN, l, r);
 
-        Expression result = eval_expression(comparison);
+        Expression result = eval_expression(comparison, NULL);
         passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
         expr_free(comparison);
@@ -41,7 +41,7 @@ bool type_mismatch(void) {
 
         Expression* and_expr = expr_binary(OP_AND, l, r);
 
-        Expression result = eval_expression(and_expr);
+        Expression result = eval_expression(and_expr, NULL);
         passed_tests &= test_assert(result.kind == EXPR_INVALID, "Result kind should be EXPR_INVALID (error)");
 
         expr_free(and_expr);

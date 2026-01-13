@@ -13,7 +13,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 3.0, "10 - 5 - 2 should equal 3.0 (Left Associative)");
@@ -27,7 +27,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 5.0, "20 / 2 / 2 should equal 5.0 (Left Associative)");
@@ -41,7 +41,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 14.0, "2 + 3 * 4 should equal 14.0");
@@ -55,7 +55,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 20.0, "(2 + 3) * 4 should equal 20.0");
@@ -69,7 +69,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_BOOL, "Result kind should be EXPR_BOOL");
     bool result = result_expr.as.boolean;
     passed_tests &= test_assert(result == true, "1 + 2 < 5 && 3 * 2 == 6 should be true");
@@ -83,7 +83,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 5.0, "- -5 should equal 5.0");
@@ -97,7 +97,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 2.0, "5 + -3 should equal 2.0");
@@ -111,7 +111,7 @@ bool complex_expr_parsing(void) {
     Program* program = parse(tokens);
     Statement* stmt = ((TopLevel*)vec_get(&program->items, 0))->as.statement;
     Expression* expr = stmt->as.expr;
-    Expression result_expr = eval_expression(expr);
+    Expression result_expr = eval_expression(expr, NULL);
     passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
     float result = result_expr.as.number;
     passed_tests &= test_assert(result == 3.0, "((((1 + 2)))) should equal 3.0");
@@ -127,7 +127,7 @@ bool complex_expr_parsing(void) {
     Expression* expr = stmt->as.expr;
     // This should result in a type mismatch error during evaluation
     // because (1 < 2) is true (bool), and true < 3 is bool < number.
-    Expression res = eval_expression(expr);
+    Expression res = eval_expression(expr, NULL);
     passed_tests &= test_assert(res.kind == EXPR_INVALID, "1 < 2 < 3 should fail type check");
     vec_free(&tokens);
     program_free(program);

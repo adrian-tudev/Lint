@@ -14,7 +14,7 @@ bool numerical_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 8.0, "3 + 5 should equal 8.0");
@@ -28,7 +28,7 @@ bool numerical_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 4.0, "10 - 2 * 3 should equal 4.0");
@@ -42,7 +42,7 @@ bool numerical_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 42.0, "42 should equal 42.0");
@@ -56,7 +56,7 @@ bool numerical_expr_parsing(void) {
     for (size_t i = 0; i < program->items.size; i++) {
       Statement* stmt = ((TopLevel*)vec_get(&program->items, i))->as.statement;
       Expression* expr = stmt->as.expr;
-      Expression result_expr = eval_expression(expr);
+      Expression result_expr = eval_expression(expr, NULL);
       passed_tests &= test_assert(result_expr.kind == EXPR_NUMBER, "Result kind should be EXPR_NUMBER");
       float result = result_expr.as.number;
       passed_tests &= test_assert(result == 15.0, "1 + 2 + 3 + 4 + 5 should equal 15.0");

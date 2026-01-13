@@ -11,7 +11,7 @@
 #include "lexer/token_table.h"
 #include "utils/vector.h"
 
-#define TOKEN_TYPE_COUNT INVALID + 1
+#define TOKEN_TYPE_COUNT TOK_INVALID + 1
 
 typedef struct Token {
   // error info
