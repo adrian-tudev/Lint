@@ -33,6 +33,10 @@ add_executable(lint_test ${LIB_SOURCES} ${TEST_SOURCES})
 target_include_directories(lint_test PRIVATE tests)
 target_compile_definitions(lint_test PRIVATE TESTS)
 
+if(READLINE_LIBRARY)
+    target_link_libraries(lint_test PRIVATE ${READLINE_LIBRARY})
+endif()
+
 # Custom target to run tests
 add_custom_target(tests
     COMMAND lint_test
