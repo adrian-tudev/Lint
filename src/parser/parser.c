@@ -23,3 +23,17 @@ Program* parse(Vector tokens) {
 
   return program;
 }
+
+// add statements to a program (mainly for repl)
+// TODO: parse all TopLevel items
+bool parse_line(Program* program, Vector tokens) {
+  init_parse_context(tokens);
+
+  Statement* stmt = parse_statement();
+  if (stmt == NULL) return false;
+
+  program_add_statement(program, stmt);
+  
+  return true;
+}
+

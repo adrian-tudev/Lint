@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <unistd.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+
 #include "parser/parser.h"
 #include "execution/interpreter.h"
 #include "lexer/token.h"
@@ -34,28 +38,53 @@ void run_file(const char* path) {
   }
 
   Program* program = parse(tokens);
+  ast_print_program(program);
   execute(program);
+  hm_print(program->ctx);
 
   program_free(program);
-
-  // print tokens for debugging
-  // for (size_t i = 0; i < tokens.size; i++) {
-  //   Token* tok = (Token*) vec_get(&tokens, i);
-  //   print_token(tok);
-  // }
 
   vec_free(&tokens);
 
   fclose(file);
 }
 
-// 
-void repl(const char* line, uint32_t row) {
-  Vector tokens = tokenize(line, row);
+// Read-Eval-Print-Loop
+void repl(bool debug) {
+  Program* program = program_new();
+  char* line;
+  while ((line = readline("> ")) != NULL) {
+    if (*line) {
+      Vector tokens = tokenize(line, 0);
 
-  Program* program = parse(tokens);
-  execute(program);
+      // try parse line
+      if (!parse_line(program, tokens)) {
+        vec_free(&tokens);
+        free(line);
+        continue;
+      }
+
+      // execute last line
+      Vector stmts = program->items;
+      TopLevel* last = (TopLevel*)vec_get(&stmts, stmts.size - 1);
+
+      if (last == NULL) continue;
+
+      execute_top_level(last, program->ctx);
+
+      add_history(line);
+
+      vec_free(&tokens);
+
+      // debugging
+      if (debug) {
+        ast_print_program(program);
+        hm_print(program->ctx);
+      }
+    }
+    free(line);
+  }
 
   program_free(program);
-  vec_free(&tokens);
 }
+

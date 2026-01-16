@@ -1,9 +1,10 @@
 #ifndef LINT_H_
 #define LINT_H_
 
-#include "lexer/token.h"
+#include <stdbool.h>
 
-void repl(const char* line, uint32_t row);
+// debug option prints the AST and the global context scope 
+void repl(bool debug);
 void run_file(const char* file);
 
 #endif  // LINT_H
