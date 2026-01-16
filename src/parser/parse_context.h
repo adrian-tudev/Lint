@@ -8,6 +8,7 @@ void init_parse_context(Vector tokens);
 
 // have a peek at the current token in the ParseContext
 const Token* peek(void);
+const Token* peek_next(void);
 bool ctx_end(void);
 
 // true if current operator in ParseContext matches given OperatorKind

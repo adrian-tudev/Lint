@@ -8,7 +8,7 @@ int main(int argc, char* args[]) {
     run_file(args[1]);
     return 0;
   } else {
-    repl();
+    repl(1);
   }
 
   return 0;

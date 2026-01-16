@@ -42,6 +42,11 @@ const Token* peek(void) {
   return (Token*)vec_get(&ctx.tokens, ctx.position);
 }
 
+const Token* peek_next(void) {
+  if (ctx.position + 1 >= ctx.tokens.size) return NULL;
+  return (Token*)vec_get(&ctx.tokens, ctx.position + 1);
+}
+
 bool ctx_end(void) {
   return ctx.position >= ctx.tokens.size;
 }
