@@ -1,43 +1,59 @@
 #include "execution/interpreter.h"
 
-#include "ast/grammar.h"
-#include "utils/error.h"
+#include <stdbool.h>
 
+#include "ast/grammar.h"
 #include "execution/eval.h"
+#include "utils/error.h"
 
 // =====================
 // Prototypes
 // =====================
 
 static bool execute_assignment(Assignment assignment, HashMap* ctx);
-static bool execute_if_stmt(IfStmt stmt);
-static bool execute_while_stmt(WhileStmt loop);
+static bool execute_if_stmt(IfStmt stmt, HashMap* scope);
+static bool execute_while_stmt(WhileStmt loop, HashMap* scope);
+
+static InterpreterConfig cfg = (InterpreterConfig) {
+  .debug_info = false,
+  .repl = true
+};
 
 // =====================
 // Public Functions
 // =====================
 
+void set_interpreter_config(InterpreterConfig config) {
+  cfg = config;
+}
+
 bool execute(Program* program) {
   Vector items = program->items;
   for (size_t i = 0; i < items.size; i++) {
     TopLevel* item = (TopLevel*) vec_get(&items, i);
-    // exit if item is malformed
-    if (item == NULL) return false;
-    switch (item->kind) {
-      case TOP_STATEMENT: {
-        Statement* stmt = item->as.statement;
-        if (!execute_statement(stmt, program->ctx)) return false;
-        break;
-      }
-      case TOP_FUNCTION: {
-        Function* fn = item->as.function;
-        execute_function_def(fn);
-        break;
-      }
-      default:
-        // Unknown top-level kind
-        return false;
+    if (!execute_top_level(item, program->ctx)) return false;
+  }
+  return true;
+}
+
+bool execute_top_level(TopLevel* item, HashMap* ctx) {
+  // exit if item is malformed
+  if (item == NULL) return false;
+
+  switch (item->kind) {
+    case TOP_STATEMENT: {
+      Statement* stmt = item->as.statement;
+      if (!execute_statement(stmt, ctx)) return false;
+      break;
     }
+    case TOP_FUNCTION: {
+      Function* fn = item->as.function;
+      execute_function_def(fn);
+      break;
+    }
+    default:
+      // Unknown top-level kind
+      return false;
   }
   return true;
 }
@@ -59,14 +75,14 @@ bool execute_statement(Statement* statement, HashMap* scope) {
   StatementKind kind = statement->kind;
   switch (kind) {
     case STMT_EXPR:
-      eval_expression(statement->as.expr);
+      print(eval_expression(statement->as.expr, scope));
       break;
     case STMT_ASSIGN:
       return execute_assignment(statement->as.assignment, scope);
     case STMT_IF:
-      return execute_if_stmt(statement->as.if_stmt);
+      return execute_if_stmt(statement->as.if_stmt, scope);
     case STMT_WHILE:
-      return execute_while_stmt(statement->as.while_stmt);
+      return execute_while_stmt(statement->as.while_stmt, scope);
     case STMT_BLOCK:
       return execute_block(statement->as.block);
     default:
@@ -75,9 +91,9 @@ bool execute_statement(Statement* statement, HashMap* scope) {
   return true;
 }
 
-static bool execute_if_stmt(IfStmt stmt) {
+static bool execute_if_stmt(IfStmt stmt, HashMap* scope) {
   Expression* condition = stmt.condition;
-  Expression res = eval_expression(condition);
+  Expression res = eval_expression(condition, scope);
 
   if (res.kind != EXPR_BOOL) {
     error_log("Condition in if statement must be boolean expression!\n");
@@ -95,14 +111,14 @@ static bool execute_if_stmt(IfStmt stmt) {
 
 // store identifier in table
 static bool execute_assignment(Assignment assignment, HashMap* ctx) {
-  Expression res = eval_expression(assignment.rvalue);
+  Expression res = eval_expression(assignment.rvalue, ctx);
   Value* val;
   switch (res.kind) {
     case EXPR_BOOL:
       val = new_bool_value(res.as.boolean);
       break;
     case EXPR_NUMBER:
-      val = new_int_value(res.as.number);
+      val = new_int_value((int64_t)res.as.number);
       break;
     case EXPR_STRING:
       val = new_string_value(res.as.string);
@@ -117,6 +133,6 @@ static bool execute_assignment(Assignment assignment, HashMap* ctx) {
   return true;
 }
 
-static bool execute_while_stmt(WhileStmt loop) {
+static bool execute_while_stmt(WhileStmt loop, HashMap* scope) {
   return false;
 }

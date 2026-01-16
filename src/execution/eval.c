@@ -3,18 +3,20 @@
 #include <stdio.h>
 
 #include "utils/error.h"
+#include "utils/hashmap.h"
 
 // =====================
 // Prototypes
 // =====================
 
-static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op);
-static Expression eval_unary_expression(Expression expr, OperatorKind op);
+static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op, HashMap* scope);
+static Expression eval_unary_expression(Expression expr, OperatorKind op, HashMap* scope);
 
 static Expression bool_expr(bool value);
 static Expression num(double value);
+static Expression string_expr(const char* value);
 
-Expression eval_expression(Expression* expression) {
+Expression eval_expression(Expression* expression, HashMap* scope) {
   if (expression == NULL) return bool_expr(false);
   switch (expression->kind) {
     // default datatypes
@@ -24,16 +26,29 @@ Expression eval_expression(Expression* expression) {
     case EXPR_BINARY:
       return eval_binary_expression(
         *expression->as.binary.left,
-        *expression->as.binary.right, 
-        expression->as.binary.op);
+        *expression->as.binary.right,
+        expression->as.binary.op,
+        scope);
     
     case EXPR_UNARY:
       return eval_unary_expression(
         *expression->as.unary.operand,
-        expression->as.unary.op);
-    case EXPR_IDENTIFIER:
-      printf("not implemented yet\n");
-      break;
+        expression->as.unary.op,
+        scope);
+
+    case EXPR_IDENTIFIER: {
+      Value* val = hm_get(scope, expression->as.identifier);
+      if (val == NULL) {
+        error_log("Undefined variable '%s'\n", expression->as.identifier);
+        return bool_expr(false);
+      }
+      switch (val->type) {
+        case VAL_BOOL: return bool_expr(val->as.boolean);
+        case VAL_INT: return num((double)val->as.integer);
+        case VAL_STRING: return string_expr(val->as.string);
+        default: return bool_expr(false);
+      }
+    }
     default:
       error_log("Unrecognized expression kind: %d\n", expression->kind);
   }
@@ -59,6 +74,13 @@ static Expression bool_expr(bool value) {
   return result;
 }
 
+static Expression string_expr(const char* value) {
+  Expression result;
+  result.kind = EXPR_STRING;
+  result.as.string = value;
+  return result;
+}
+
 static Expression invalid_expr(void) {
   Expression result;
   result.kind = EXPR_INVALID;
@@ -66,9 +88,9 @@ static Expression invalid_expr(void) {
 }
 
 // recursively evaluate a binary expression
-static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op) {
-  Expression l = eval_expression(&left);
-  Expression r = eval_expression(&right);
+static Expression eval_binary_expression(Expression left, Expression right, OperatorKind op, HashMap* scope) {
+  Expression l = eval_expression(&left, scope);
+  Expression r = eval_expression(&right, scope);
 
   if (l.kind != r.kind) {
     error_log("Type mismatch in binary operation!\n");
@@ -130,8 +152,8 @@ ret_error:
   return invalid_expr();
 }
 
-static Expression eval_unary_expression(Expression expr, OperatorKind op) {
-  Expression e = eval_expression(&expr);
+static Expression eval_unary_expression(Expression expr, OperatorKind op, HashMap* scope) {
+  Expression e = eval_expression(&expr, scope);
   switch (op) {
     case OP_NOT:
       return bool_expr(!e.as.boolean);

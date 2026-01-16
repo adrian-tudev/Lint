@@ -55,6 +55,8 @@ void repl(bool debug) {
   char* line;
   while ((line = readline("> ")) != NULL) {
     if (*line) {
+      add_history(line);
+
       Vector tokens = tokenize(line, 0);
 
       // try parse line
@@ -69,10 +71,7 @@ void repl(bool debug) {
       TopLevel* last = (TopLevel*)vec_get(&stmts, stmts.size - 1);
 
       if (last == NULL) continue;
-
       execute_top_level(last, program->ctx);
-
-      add_history(line);
 
       vec_free(&tokens);
 
