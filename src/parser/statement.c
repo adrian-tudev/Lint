@@ -54,8 +54,16 @@ Statement *parse_statement(void) {
     break;
   
   // TODO: handle identifier as start of assignment statement or expression
-  case TOK_IDENTIFIER:
-    break;
+  case TOK_IDENTIFIER: {
+    const Token* nxt_tok = peek_next();
+    // fall through if next token is null, let expression handle it
+    if (nxt_tok == NULL) {}
+    // assignment
+    else if (peek_next()->type == TOK_EQUAL)
+      return parse_assignment_statement();
+    // any other case, fall through
+    else {}
+  }
 
   // TODO: match against only valid expression symbols
   default: {
@@ -103,8 +111,7 @@ static Statement *parse_block_statement(void) {
 }
 
 static Statement *parse_assignment_statement(void) {
-  // guarantee we have 'let' token
-  assert(match(TOK_LET));
+  match(TOK_LET);
 
   // store the identifier token
   const Token *variable = peek();
