@@ -11,8 +11,8 @@
 #include "execution/interpreter.h"
 #include "lexer/token.h"
 
-void run_file(const char* path) {
-  FILE* file = fopen(path, "r");
+void run_file(RuntimeConfig file_cfg) {
+  FILE* file = fopen(file_cfg.file, "r");
   if (file == NULL) {
     printf("File not found!\n");
     exit(1);
@@ -24,33 +24,34 @@ void run_file(const char* path) {
 
   Vector tokens;
   vec_init(&tokens);
+
+  set_interpreter_config(file_cfg);
   
   // read all lines and create tokens
   while (fgets(line, sizeof(line), file)) { 
     Vector line_tokens = tokenize(line, rows);
-    // append line tokens to main tokens vector
-    for (size_t i = 0; i < line_tokens.size; i++) {
-      Token* tok = (Token*) vec_get(&line_tokens, i);
-      vec_push(&tokens, tok);
-    }
+    vec_merge(&tokens, &line_tokens);
     vec_free(&line_tokens);
     rows++;
   }
 
   Program* program = parse(tokens);
-  ast_print_program(program);
+
   execute(program);
-  hm_print(program->ctx);
+
+  // debug
+  if (file_cfg.debug_info) {
+    ast_print_program(program);
+    hm_print(program->ctx);
+  }
 
   program_free(program);
-
   vec_free(&tokens);
-
   fclose(file);
 }
 
 // Read-Eval-Print-Loop
-void repl(bool debug) {
+void repl(RuntimeConfig cfg) {
   Program* program = program_new();
   char* line;
   while ((line = readline("> ")) != NULL) {
@@ -76,7 +77,7 @@ void repl(bool debug) {
       vec_free(&tokens);
 
       // debugging
-      if (debug) {
+      if (cfg.debug_info) {
         ast_print_program(program);
         hm_print(program->ctx);
       }

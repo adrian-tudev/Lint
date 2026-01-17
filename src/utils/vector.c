@@ -37,6 +37,13 @@ int vec_push(Vector *v, void *value) {
   return 1;
 }
 
+int vec_merge(Vector* v, Vector* u) {
+  for (size_t i = 0; i < u->size; i++) {
+    if (!vec_push(v, vec_get(u, i))) return 0;
+  }
+  return 1;
+}
+
 void *vec_get(const Vector *v, size_t index) {
   if (index >= v->size) return NULL;
   return v->data[index];

@@ -4,12 +4,13 @@
 #include "ast/grammar.h"
 #include "utils/hashmap.h"
 
-typedef struct InterpreterConfig {
+typedef struct RuntimeConfig{
   bool repl;
   bool debug_info;
-} InterpreterConfig;
+  const char* file;
+} RuntimeConfig;
 
-void set_interpreter_config(InterpreterConfig config);
+void set_interpreter_config(RuntimeConfig config);
 
 // walks the tree and executes the AST
 bool execute(Program* program);

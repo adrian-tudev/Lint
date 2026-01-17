@@ -10,23 +10,7 @@ static Statement *parse_assignment_statement(void);
 static Statement *parse_return_statement(void);
 static Statement *parse_if_statement(void);
 static Statement *parse_while_statement(void);
-
-// Helper to convert any statement (including STMT_BLOCK) into a Block*
-static Block *statement_to_block(Statement *stmt) {
-  if (stmt == NULL) return NULL;
-  
-  // If it's already a block statement, unwrap it to get the Block content
-  if (stmt->kind == STMT_BLOCK) {
-    Block *blk = stmt->as.block;
-    free(stmt); 
-    return blk;
-  }
-
-  // Otherwise, wrap the single statement in a new block
-  Block *blk = block_new();
-  block_add(blk, stmt);
-  return blk;
-}
+static Block *statement_to_block(Statement *stmt);
 
 Statement *parse_statement(void) {
   const Token *token = peek();
@@ -188,4 +172,21 @@ static Statement* parse_if_statement(void) {
     return stmt_if(condition, then_body, else_body);
   }
   return NULL;
+}
+
+// Helper to convert any statement (including STMT_BLOCK) into a Block*
+static Block *statement_to_block(Statement *stmt) {
+  if (stmt == NULL) return NULL;
+  
+  // If it's already a block statement, unwrap it to get the Block content
+  if (stmt->kind == STMT_BLOCK) {
+    Block *blk = stmt->as.block;
+    free(stmt); 
+    return blk;
+  }
+
+  // Otherwise, wrap the single statement in a new block
+  Block *blk = block_new();
+  block_add(blk, stmt);
+  return blk;
 }

@@ -3,8 +3,10 @@
 
 #include <stdbool.h>
 
+#include "execution/interpreter.h"
+
 // debug option prints the AST and the global context scope 
-void repl(bool debug);
-void run_file(const char* file);
+void repl(RuntimeConfig cfg);
+void run_file(RuntimeConfig file_cfg);
 
 #endif  // LINT_H

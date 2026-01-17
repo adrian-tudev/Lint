@@ -14,7 +14,7 @@ static bool execute_assignment(Assignment assignment, HashMap* ctx);
 static bool execute_if_stmt(IfStmt stmt, HashMap* scope);
 static bool execute_while_stmt(WhileStmt loop, HashMap* scope);
 
-static InterpreterConfig cfg = (InterpreterConfig) {
+static RuntimeConfig cfg = (RuntimeConfig) {
   .debug_info = false,
   .repl = true
 };
@@ -23,7 +23,7 @@ static InterpreterConfig cfg = (InterpreterConfig) {
 // Public Functions
 // =====================
 
-void set_interpreter_config(InterpreterConfig config) {
+void set_interpreter_config(RuntimeConfig config) {
   cfg = config;
 }
 
@@ -75,7 +75,10 @@ bool execute_statement(Statement* statement, HashMap* scope) {
   StatementKind kind = statement->kind;
   switch (kind) {
     case STMT_EXPR:
-      print(eval_expression(statement->as.expr, scope));
+      if (cfg.repl)
+        print(eval_expression(statement->as.expr, scope));
+      else
+        eval_expression(statement->as.expr, scope);
       break;
     case STMT_ASSIGN:
       return execute_assignment(statement->as.assignment, scope);
