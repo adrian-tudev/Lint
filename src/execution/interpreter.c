@@ -111,6 +111,12 @@ static bool execute_if_stmt(IfStmt stmt, HashMap* scope) {
 
 // store identifier in table
 static bool execute_assignment(Assignment assignment, HashMap* ctx) {
+  Value* identifier = hm_get(ctx, assignment.identifier);
+  if (identifier == NULL && assignment.reassignment) {
+    error_log("Can't reassign unbound identifier: %s!\n", assignment.identifier);
+    return false;
+  }
+
   Expression res = eval_expression(assignment.rvalue, ctx);
   Value* val;
   switch (res.kind) {
@@ -128,8 +134,8 @@ static bool execute_assignment(Assignment assignment, HashMap* ctx) {
       return false;
   }
   hm_set(ctx, assignment.identifier, val);
-  printf("[DEBUG] assigned %s to ", assignment.identifier);
-  print(res);
+  //printf("[DEBUG] assigned %s to ", assignment.identifier);
+  //print(res);
   return true;
 }
 

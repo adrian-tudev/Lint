@@ -87,6 +87,7 @@ struct Expression {
 typedef struct {
   const char *identifier;
   Expression *rvalue;
+  bool reassignment;
 } Assignment;
 
 typedef struct {

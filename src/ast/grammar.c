@@ -143,11 +143,12 @@ Statement *stmt_expr(Expression *expr) {
   return s;
 }
 
-Statement *stmt_assign(const char *identifier, Expression *rvalue) {
+Statement *stmt_assign(const char *identifier, Expression *rvalue, bool reassignment) {
   Statement *s = stmt_alloc(STMT_ASSIGN);
   if (!s) return NULL;
   s->as.assignment.identifier = identifier;
   s->as.assignment.rvalue = rvalue;
+  s->as.assignment.reassignment = reassignment;
   return s;
 }
 

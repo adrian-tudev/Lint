@@ -27,7 +27,7 @@ bool block_add(Block *block, Statement *stmt);
 void block_free(Block *block);
 
 Statement *stmt_expr(Expression *expr);
-Statement *stmt_assign(const char *identifier, Expression *rvalue);
+Statement *stmt_assign(const char *identifier, Expression *rvalue, bool reassignment);
 Statement *stmt_return(Expression *value_or_null);
 Statement *stmt_if(Expression *condition, Block *then_body, Block *else_body_or_null);
 Statement *stmt_while(Expression *condition, Block *body);

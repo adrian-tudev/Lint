@@ -111,7 +111,8 @@ static Statement *parse_block_statement(void) {
 }
 
 static Statement *parse_assignment_statement(void) {
-  match(TOK_LET);
+  // check if Let keyword exists to determine reassignment
+  bool reassignment = !match(TOK_LET);
 
   // store the identifier token
   const Token *variable = peek();
@@ -122,7 +123,7 @@ static Statement *parse_assignment_statement(void) {
   if (match(TOK_IDENTIFIER)) {
     // expect '=' token
     if (!match(TOK_EQUAL)) {
-      error_log("Expected '=' after identifier in let statement at %u:%u\n",
+      error_log("Expected '=' after identifier in assignment at %u:%u\n",
                 variable->row, variable->column);
       return NULL;
     }
@@ -130,19 +131,19 @@ static Statement *parse_assignment_statement(void) {
     // parse the rvalue expression
     Expression *rvalue = parse_expression();
     if (rvalue == NULL) {
-      error_log("Expected expression after '=' in let statement at %u:%u\n",
+      error_log("Expected expression after '=' in assignment at %u:%u\n",
                 variable->row, variable->column);
       return NULL;
     }
 
     // expect ';' token
     if (!match(TOK_SEMICOLON)) {
-      error_log("Expected ';' after expression in let statement at %u:%u\n",
+      error_log("Expected ';' after expression in assignment at %u:%u\n",
                 variable->row, variable->column);
       return NULL;
     }
 
-    return stmt_assign(variable->token, rvalue);
+    return stmt_assign(variable->token, rvalue, reassignment);
   } else {
     error_log("Expected identifier after 'let' at %u:%u\n", variable->row,
               variable->column);
