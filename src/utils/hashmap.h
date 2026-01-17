@@ -1,8 +1,10 @@
 #ifndef HASHMAP_H_
 #define HASHMAP_H_
 
-#include "utils/value.h"
 #include <stdbool.h>
+#include <stdlib.h>
+
+#include "utils/value.h"
 
 typedef struct HashMap HashMap;
 
@@ -27,5 +29,12 @@ bool hm_delete(HashMap* map, const char* key);
 
 // Prints all key-value pairs in the hashmap for debugging.
 void hm_print(const HashMap* map);
+
+// Returns a dynamically allocated array of keys.
+// The caller is responsible for freeing the array, but NOT the keys themselves.
+// The keys remain owned by the HashMap.
+// The number of keys is written to out_count.
+// Returns NULL if the map is empty or allocation fails.
+char** hm_get_keys(const HashMap* map, size_t* out_count);
 
 #endif // HASHMAP_H_

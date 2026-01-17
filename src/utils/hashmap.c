@@ -219,3 +219,25 @@ void hm_print(const HashMap* map) {
         }
     }
 }
+
+char** hm_get_keys(const HashMap* map, size_t* out_count) {
+    if (map == NULL || map->count == 0) {
+        if (out_count) *out_count = 0;
+        return NULL;
+    }
+
+    char** keys = malloc(map->count * sizeof(char*));
+    if (keys == NULL) return NULL;
+
+    size_t k = 0;
+    for (size_t i = 0; i < map->capacity; i++) {
+        Entry* entry = map->buckets[i];
+        while (entry != NULL) {
+            keys[k++] = entry->key;
+            entry = entry->next;
+        }
+    }
+
+    if (out_count) *out_count = map->count;
+    return keys;
+}

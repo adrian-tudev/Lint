@@ -1,5 +1,6 @@
 #include "execution/interpreter.h"
 
+#include <assert.h>
 #include <stdbool.h>
 
 #include "ast/grammar.h"
@@ -62,7 +63,16 @@ bool execute_function_def(Function* function) {
   return true;
 }
 
-bool execute_block(Block* block) {
+bool execute_block(Block* block, HashMap* parent_scope) {
+  // copy values from upper scope
+  size_t key_cnt = 0;
+  char** keys = hm_get_keys(parent_scope, &key_cnt);
+  for (size_t i = 0; i < key_cnt; i++) {
+    Value* val = hm_get(parent_scope, keys[i]);
+    assert(val != NULL);
+    hm_set(block->ctx, keys[i], val);
+  }
+
   Vector stmts = block->statements;
   for (size_t i = 0; i < stmts.size; i++) {
     Statement* stmt = (Statement*) vec_get(&stmts, i);
@@ -87,7 +97,7 @@ bool execute_statement(Statement* statement, HashMap* scope) {
     case STMT_WHILE:
       return execute_while_stmt(statement->as.while_stmt, scope);
     case STMT_BLOCK:
-      return execute_block(statement->as.block);
+      return execute_block(statement->as.block, scope);
     default:
       break;
   }
@@ -105,9 +115,9 @@ static bool execute_if_stmt(IfStmt stmt, HashMap* scope) {
 
   // IF-ELSE execution
   if (res.as.boolean == 1 && stmt.then_body != NULL)
-    return execute_block(stmt.then_body);
+    return execute_block(stmt.then_body, scope);
   else if (res.as.boolean == 0 && stmt.else_body != NULL)
-    return execute_block(stmt.else_body);
+    return execute_block(stmt.else_body, scope);
   
   return true;
 }
