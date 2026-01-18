@@ -37,4 +37,8 @@ void hm_print(const HashMap* map);
 // Returns NULL if the map is empty or allocation fails.
 char** hm_get_keys(const HashMap* map, size_t* out_count);
 
+// Creates a deep copy of the hashmap.
+// Returns NULL if memory allocation fails.
+HashMap* hm_copy(const HashMap* map);
+
 #endif // HASHMAP_H_

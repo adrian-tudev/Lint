@@ -33,6 +33,19 @@ Value* new_string_value(const char* chars) {
     return val;
 }
 
+Value* copy_value(const Value* value) {
+    if (value == NULL) return NULL;
+    switch (value->type) {
+        case VAL_BOOL:
+            return new_bool_value(value->as.boolean);
+        case VAL_INT:
+            return new_int_value(value->as.integer);
+        case VAL_STRING:
+            return new_string_value(value->as.string);
+    }
+    return NULL;
+}
+
 void free_value(Value* value) {
     if (value == NULL) return;
     if (value->type == VAL_STRING) {

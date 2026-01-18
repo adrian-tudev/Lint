@@ -63,22 +63,33 @@ bool execute_function_def(Function* function) {
   return true;
 }
 
+// Given a parent scope copy it over to the current scope
+// and after executing the current block, update parent scope
 bool execute_block(Block* block, HashMap* parent_scope) {
-  // copy values from upper scope
-  size_t key_cnt = 0;
-  char** keys = hm_get_keys(parent_scope, &key_cnt);
-  for (size_t i = 0; i < key_cnt; i++) {
-    Value* val = hm_get(parent_scope, keys[i]);
-    assert(val != NULL);
-    hm_set(block->ctx, keys[i], val);
-  }
+  HashMap* ctx = hm_copy(parent_scope);
+  size_t cnt = 0;
+  char** global_identifiers = hm_get_keys(parent_scope, &cnt);
 
+  bool success = true;
   Vector stmts = block->statements;
   for (size_t i = 0; i < stmts.size; i++) {
     Statement* stmt = (Statement*) vec_get(&stmts, i);
-    if (!execute_statement(stmt, block->ctx)) return false;
+    if (!execute_statement(stmt, ctx)) {
+      success = false;
+      break;
+    }
   }
-  return true;
+
+  if (success) {
+    for (size_t i = 0; i < cnt; i++) {
+      Value* new_val = hm_get(ctx, global_identifiers[i]);
+      hm_set(parent_scope, global_identifiers[i], copy_value(new_val));
+    }
+  }
+
+  if (global_identifiers) free(global_identifiers);
+  hm_free(ctx);
+  return success;
 }
 
 bool execute_statement(Statement* statement, HashMap* scope) {
@@ -125,8 +136,16 @@ static bool execute_if_stmt(IfStmt stmt, HashMap* scope) {
 // store identifier in table
 static bool execute_assignment(Assignment assignment, HashMap* ctx) {
   Value* identifier = hm_get(ctx, assignment.identifier);
+
+  // cannot reassign a nonexisting value
   if (identifier == NULL && assignment.reassignment) {
     error_log("Can't reassign unbound identifier: %s!\n", assignment.identifier);
+    return false;
+  }
+
+  // disallow variable shadowing
+  if (identifier != NULL && !assignment.reassignment) {
+    error_log("Redefinition of existing variable: %s!\n", assignment.identifier);
     return false;
   }
 
@@ -147,8 +166,6 @@ static bool execute_assignment(Assignment assignment, HashMap* ctx) {
       return false;
   }
   hm_set(ctx, assignment.identifier, val);
-  //printf("[DEBUG] assigned %s to ", assignment.identifier);
-  //print(res);
   return true;
 }
 

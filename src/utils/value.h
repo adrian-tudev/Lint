@@ -23,6 +23,7 @@ typedef struct Value {
 Value* new_bool_value(bool value);
 Value* new_int_value(int64_t value);
 Value* new_string_value(const char* chars);
+Value* copy_value(const Value* value);
 void free_value(Value* value);
 
 #endif // VALUE_H_

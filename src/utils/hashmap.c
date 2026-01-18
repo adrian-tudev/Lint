@@ -241,3 +241,37 @@ char** hm_get_keys(const HashMap* map, size_t* out_count) {
     if (out_count) *out_count = map->count;
     return keys;
 }
+
+HashMap* hm_copy(const HashMap* map) {
+    if (map == NULL) return NULL;
+
+    HashMap* copy = hm_create();
+    if (copy == NULL) return NULL;
+
+    if (map->capacity > 8) {
+        if (!hm_adjust_capacity(copy, map->capacity)) {
+            hm_free(copy);
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < map->capacity; i++) {
+        Entry* entry = map->buckets[i];
+        while (entry != NULL) {
+            Value* val_copy = copy_value(entry->value);
+
+            if (val_copy == NULL) {
+                hm_free(copy);
+                return NULL;
+            }
+
+            if (!hm_set(copy, entry->key, val_copy)) {
+                hm_free(copy);
+                return NULL;
+            }
+            entry = entry->next;
+        }
+    }
+
+    return copy;
+}
