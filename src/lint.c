@@ -11,10 +11,7 @@
 #include "execution/interpreter.h"
 #include "lexer/token.h"
 
-static volatile bool run = 1;
-void quitter(int) {
-  run = 0;
-}
+
 
 void run_file(RuntimeConfig file_cfg) {
   FILE* file = fopen(file_cfg.file, "r");
@@ -57,11 +54,9 @@ void run_file(RuntimeConfig file_cfg) {
 
 // Read-Eval-Print-Loop
 void repl(RuntimeConfig cfg) {
-  signal(SIGINT, quitter);
-
   Program* program = program_new();
   char* line;
-  while (run) {
+  while (true) {
     line = readline("> ");
     if (line == NULL) break;
 
