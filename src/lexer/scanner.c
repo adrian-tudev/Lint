@@ -84,5 +84,5 @@ const Scanner punctuation_scanner = {
 
 const Scanner* scanners[] = {
   &word_scanner, &literal_scanner, &string_scanner,
-  &op_scanner, &punctuation_scanner,
+  &op_scanner, &punctuation_scanner, NULL,
 };
