@@ -23,5 +23,6 @@ extern const Scanner literal_scanner;
 extern const Scanner string_scanner;
 extern const Scanner op_scanner;
 extern const Scanner punctuation_scanner;
+extern const Scanner comment_scanner;
 
 #endif // SCANNER_H_

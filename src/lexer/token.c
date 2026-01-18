@@ -20,7 +20,7 @@ static Token* token_from_lexeme(const char* lexeme, Scanner* scanner, uint32_t r
 // =====================
 
 /*
-Get suitable scanner, scan lexeme until scanner end condition and construct token[s] from given lexeme.
+Get suitable scanner, scan lexeme until scanner end condition and construct token from given lexeme.
 */
 Vector tokenize(const char* line, uint32_t row) {
   Vector tokens;
@@ -38,6 +38,11 @@ Vector tokenize(const char* line, uint32_t row) {
     }
 
     const char* lexeme = scan(*scanner, line, i);
+
+    if (scanner == &comment_scanner) {
+      i += strlen(lexeme) - 1;
+      continue;
+    }
 
     // constructs token and validate if needed, handles errors internally
     Token* tok = token_from_lexeme(lexeme, scanner, row, i);
@@ -111,6 +116,7 @@ static void resolve_token(const Scanner* scanner, const char* lexeme, Token* tok
     // no valid operator found
     error_log("Invalid operator at row %u, col %zu\n", row, i);
   } else {
+    tok->type = TOK_INVALID;
     error_log("No suitable scanner for character at row %u, col %zu (invalid token)\n", row, i);
   }
 }
@@ -150,4 +156,3 @@ static bool is_valid_literal(const char* str) {
   }
   return true;
 }
-

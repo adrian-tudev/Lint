@@ -45,6 +45,8 @@ static bool init_op(const char c) { return char_in_arr(c, operators); }
 static bool end_op(const char c) { return !char_in_arr(c, operators); }
 static bool init_punctuator(const char c) { return char_in_arr(c, punctuators); }
 static bool end_punctuator(const char c) { return char_in_arr(c, punctuators); }
+static bool init_comment(const char c) { return c == '#'; }
+static bool end_comment(const char c) { return c == '\n'; }
 
 // Define scanner instances here
 const Scanner word_scanner = {
@@ -82,7 +84,15 @@ const Scanner punctuation_scanner = {
   .include_begin = false,
 };
 
+const Scanner comment_scanner = {
+  .init_condition = init_comment,
+  .end_condition = end_comment,
+  .include_begin = true,
+  .include_end = true,
+};
+
 const Scanner* scanners[] = {
   &word_scanner, &literal_scanner, &string_scanner,
-  &op_scanner, &punctuation_scanner, NULL,
+  &op_scanner, &punctuation_scanner, &comment_scanner,
+  NULL
 };
