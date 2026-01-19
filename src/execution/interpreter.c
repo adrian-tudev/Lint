@@ -169,6 +169,20 @@ static bool execute_assignment(Assignment assignment, HashMap* ctx) {
   return true;
 }
 
-static bool execute_while_stmt(WhileStmt loop, HashMap* scope) {
-  return false;
+static bool execute_while_stmt(WhileStmt stmt, HashMap* scope) {
+  Expression condition = eval_expression(stmt.condition, scope);
+  if (condition.kind != EXPR_BOOL) {
+    error_log("Condition for while statement has to be a boolean value!\n");
+    return false;
+  }
+
+  while (true) {
+    if (condition.as.boolean == false) break;
+    if (!execute_block(stmt.body, scope)) 
+      return false;
+    condition = eval_expression(stmt.condition, scope);
+  }
+
+  return true;
 }
+

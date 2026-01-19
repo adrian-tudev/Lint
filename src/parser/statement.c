@@ -31,7 +31,7 @@ Statement *parse_statement(void) {
   case TOK_FOR:
     break;
   case TOK_WHILE:
-    break;
+    return parse_while_statement();
   
   case TOK_LEFT_BRACE:
     return parse_block_statement();
@@ -174,6 +174,32 @@ static Statement* parse_if_statement(void) {
   return NULL;
 }
 
+static Statement* parse_while_statement(void) {
+  assert(match(TOK_WHILE));
+
+  if (match(TOK_LEFT_PARENTHESIS)) {
+    Expression* condition = parse_expression();
+    if (condition == NULL) {
+      error_log("Expected expression after '('\n");
+      return NULL;
+    }
+
+    if (!match(TOK_RIGHT_PARENTHESIS)) {
+      error_log("Expected ')' after condition\n");
+      return NULL;
+    }
+
+    Statement* body = parse_block_statement();
+    if (body == NULL) {
+      error_log("Expected block statement after while condition\n");
+      return NULL;
+    }
+    Block* body_block = statement_to_block(body);
+    return stmt_while(condition, body_block);
+  }
+  return NULL;
+}
+
 // Helper to convert any statement (including STMT_BLOCK) into a Block*
 static Block *statement_to_block(Statement *stmt) {
   if (stmt == NULL) return NULL;
@@ -190,3 +216,4 @@ static Block *statement_to_block(Statement *stmt) {
   block_add(blk, stmt);
   return blk;
 }
+
