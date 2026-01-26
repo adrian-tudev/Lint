@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ast/grammar.h"
+
 Value* new_bool_value(bool value) {
     Value* val = malloc(sizeof(Value));
     if (val == NULL) return NULL;
@@ -33,6 +35,14 @@ Value* new_string_value(const char* chars) {
     return val;
 }
 
+Value* new_function_value(Function* fn) {
+    Value* val = malloc(sizeof(Value));
+    if (val == NULL) return NULL;
+    val->type = VAL_FUNCTION;
+    val->as.function = fn;
+    return val;
+}
+
 Value* copy_value(const Value* value) {
     if (value == NULL) return NULL;
     switch (value->type) {
@@ -42,14 +52,23 @@ Value* copy_value(const Value* value) {
             return new_int_value(value->as.integer);
         case VAL_STRING:
             return new_string_value(value->as.string);
+        case VAL_FUNCTION:
+            return new_function_value(function_copy(value->as.function));
     }
     return NULL;
 }
 
 void free_value(Value* value) {
     if (value == NULL) return;
-    if (value->type == VAL_STRING) {
-        free(value->as.string);
+    switch (value->type) {
+        case VAL_STRING:
+            free(value->as.string);
+            break;
+        case VAL_FUNCTION:
+            function_free(value->as.function);
+            break;
+        default:
+            break;
     }
     free(value);
 }

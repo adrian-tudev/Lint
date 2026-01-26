@@ -7,6 +7,7 @@ bool split_string_test(void);
 bool test_hm_copy(void);
 bool test_hm_get_keys(void);
 bool test_value_copy(void);
+bool test_hm_copy_with_functions(void);
 
 TestSuite get_utils_suite(void) {
   static const TestCase cases[] = {
@@ -14,6 +15,7 @@ TestSuite get_utils_suite(void) {
     { "hm_copy", test_hm_copy },
     { "hm_get_keys", test_hm_get_keys },
     { "value_copy", test_value_copy },
+    { "hm_copy_with_functions", test_hm_copy_with_functions },
   };
   TestSuite s = { .name = "utils", .cases = cases, .count = sizeof(cases) / sizeof(TestCase) };
   return s;

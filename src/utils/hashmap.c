@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "utils/value.h"
+#include "ast/grammar_types.h"
 
 #define HASHMAP_MAX_LOAD 0.75
 
@@ -212,6 +213,9 @@ void hm_print(const HashMap* map) {
                     break;
                 case VAL_STRING:
                     printf("\"%s\"", entry->value->as.string);
+                    break;
+                case VAL_FUNCTION:
+                    printf("<function %s>", entry->value->as.function->identifier);
                     break;
             }
             printf("\n");

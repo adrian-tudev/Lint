@@ -5,6 +5,9 @@
 
 #include "lexer/token.h"
 
+Statement* stmt_copy(const Statement* stmt);
+Block* block_copy(const Block* block);
+
 static Expression *expr_alloc(ExpressionKind kind) {
   Expression *e = (Expression *)malloc(sizeof(Expression));
   if (!e) return NULL;
@@ -219,7 +222,11 @@ Function *function_new(const char *identifier) {
   if (!fn) return NULL;
   fn->identifier = identifier;
   vec_init(&fn->params);
-  block_init(&fn->body);
+  fn->body = block_new();
+  if (!fn->body) {
+    free(fn);
+    return NULL;
+  }
   return fn;
 }
 
@@ -230,14 +237,152 @@ bool function_add_param(Function *fn, const char *param) {
 
 bool function_add_stmt(Function *fn, Statement *stmt) {
   if (!fn) return false;
-  return block_add(&fn->body, stmt);
+  return block_add(fn->body, stmt);
 }
 
 void function_free(Function *fn) {
   if (!fn) return;
-  block_clear(&fn->body);
+  block_free(fn->body);
   vec_free(&fn->params);
   free(fn);
+}
+
+Expression* expr_copy(const Expression* expr) {
+    if (!expr) return NULL;
+    switch (expr->kind) {
+        case EXPR_NUMBER:
+            return expr_number(expr->as.number);
+        case EXPR_BOOL:
+            return expr_bool(expr->as.boolean);
+        case EXPR_IDENTIFIER:
+            return expr_identifier(expr->as.identifier);
+        case EXPR_STRING:
+            return expr_string(expr->as.string);
+        case EXPR_UNARY: {
+            Expression* operand = expr_copy(expr->as.unary.operand);
+            if (!operand) return NULL;
+            return expr_unary(expr->as.unary.op, operand);
+        }
+        case EXPR_BINARY: {
+            Expression* left = expr_copy(expr->as.binary.left);
+            if (!left) return NULL;
+            Expression* right = expr_copy(expr->as.binary.right);
+            if (!right) {
+                expr_free(left);
+                return NULL;
+            }
+            return expr_binary(expr->as.binary.op, left, right);
+        }
+        default:
+            return NULL;
+    }
+}
+
+Statement* stmt_copy(const Statement* stmt) {
+    if (!stmt) return NULL;
+    switch (stmt->kind) {
+        case STMT_EXPR: {
+            Expression* expr = expr_copy(stmt->as.expr);
+            if (!expr) return NULL;
+            return stmt_expr(expr);
+        }
+        case STMT_ASSIGN: {
+            Expression* rvalue = expr_copy(stmt->as.assignment.rvalue);
+            if (!rvalue) return NULL;
+            return stmt_assign(stmt->as.assignment.identifier, rvalue, stmt->as.assignment.reassignment);
+        }
+        case STMT_RETURN: {
+            Expression* value = NULL;
+            if (stmt->as.ret.has_value) {
+                value = expr_copy(stmt->as.ret.value);
+                if (!value) return NULL;
+            }
+            return stmt_return(value);
+        }
+        case STMT_IF: {
+            Expression* condition = expr_copy(stmt->as.if_stmt.condition);
+            if (!condition) return NULL;
+            Block* then_body = block_copy(stmt->as.if_stmt.then_body);
+            if (!then_body) {
+                expr_free(condition);
+                return NULL;
+            }
+            Block* else_body = NULL;
+            if (stmt->as.if_stmt.else_body) {
+                else_body = block_copy(stmt->as.if_stmt.else_body);
+                if (!else_body) {
+                    expr_free(condition);
+                    block_free(then_body);
+                    return NULL;
+                }
+            }
+            return stmt_if(condition, then_body, else_body);
+        }
+        case STMT_WHILE: {
+            Expression* condition = expr_copy(stmt->as.while_stmt.condition);
+            if (!condition) return NULL;
+            Block* body = block_copy(stmt->as.while_stmt.body);
+            if (!body) {
+                expr_free(condition);
+                return NULL;
+            }
+            return stmt_while(condition, body);
+        }
+        case STMT_BLOCK: {
+            Block* body = block_copy(stmt->as.block);
+            if (!body) return NULL;
+            return stmt_block(body);
+        }
+        default:
+            return NULL;
+    }
+}
+
+Block* block_copy(const Block* block) {
+    if (!block) return NULL;
+    Block* new_block = block_new();
+    if (!new_block) return NULL;
+
+    for (size_t i = 0; i < block->statements.size; i++) {
+        Statement* stmt = (Statement*)vec_get(&block->statements, i);
+        Statement* new_stmt = stmt_copy(stmt);
+        if (!new_stmt) {
+            block_free(new_block);
+            return NULL;
+        }
+        block_add(new_block, new_stmt);
+    }
+
+    hm_free(new_block->ctx); // free empty hashmap
+    new_block->ctx = hm_copy(block->ctx);
+    if (!new_block->ctx) {
+        block_free(new_block);
+        return NULL;
+    }
+    return new_block;
+}
+
+Function* function_copy(const Function* fn) {
+    if (!fn) return NULL;
+    Function* new_fn = function_new(fn->identifier);
+    if (!new_fn) return NULL;
+
+    for (size_t i = 0; i < fn->params.size; i++) {
+        const char* param = (const char*)vec_get(&fn->params, i);
+        vec_push(&new_fn->params, (void*)param);
+    }
+
+    block_free(new_fn->body); // free the empty block
+    new_fn->body = block_copy(fn->body);
+    if (!new_fn->body) {
+        // new_fn is not completely valid, so free it
+        // but function_free will try to free body, which is NULL
+        // so we need to be careful
+        free(new_fn);
+        return NULL;
+    }
+
+    return new_fn;
 }
 
 Program *program_new(void) {
@@ -505,7 +650,7 @@ void ast_print_function(const Function *fn, int indent) {
   printf("]\n");
   print_indent(indent + 1);
   printf("body:\n");
-  ast_print_block(&fn->body, indent + 2);
+  ast_print_block(fn->body, indent + 2);
 }
 
 void ast_print_program(const Program *p) {

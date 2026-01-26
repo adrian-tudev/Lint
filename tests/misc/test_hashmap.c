@@ -4,6 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "ast/grammar.h"
+#include "utils/vector.h"
+
 bool test_hm_copy(void) {
     HashMap* map = hm_create();
     
@@ -95,5 +98,65 @@ bool test_hm_get_keys(void) {
     
     free(keys);
     hm_free(map);
+    return true;
+}
+
+bool test_hm_copy_with_functions(void) {
+    HashMap* map = hm_create();
+    
+    Function* fn = function_new("my_func");
+    function_add_param(fn, "a");
+    function_add_param(fn, "b");
+    function_add_stmt(fn, stmt_return(expr_binary(OP_ADD, expr_identifier("a"), expr_identifier("b"))));
+    
+    Value* v_fn = new_function_value(fn);
+    hm_set(map, "my_func", v_fn);
+
+    HashMap* copy = hm_copy(map);
+    if (!test_assert(copy != NULL, "Function map copy should not be NULL")) {
+        hm_free(map);
+        return false;
+    }
+
+    Value* c_fn_val = hm_get(copy, "my_func");
+    if (!test_assert(c_fn_val != NULL && c_fn_val->type == VAL_FUNCTION, "Copied function value check")) {
+        hm_free(map);
+        hm_free(copy);
+        return false;
+    }
+    
+    Function* c_fn = c_fn_val->as.function;
+    if (!test_assert(strcmp(c_fn->identifier, "my_func") == 0, "Function identifier check")) {
+        hm_free(map);
+        hm_free(copy);
+        return false;
+    }
+
+    if (!test_assert(c_fn->params.size == 2, "Function param count check")) {
+        hm_free(map);
+        hm_free(copy);
+        return false;
+    }
+    
+    if (!test_assert(strcmp((char*)vec_get(&c_fn->params, 0), "a") == 0, "Function param 1 check")) {
+        hm_free(map);
+        hm_free(copy);
+        return false;
+    }
+
+    if (!test_assert(strcmp((char*)vec_get(&c_fn->params, 1), "b") == 0, "Function param 2 check")) {
+        hm_free(map);
+        hm_free(copy);
+        return false;
+    }
+    
+    if (!test_assert(c_fn->body->statements.size == 1, "Function body statement count check")) {
+        hm_free(map);
+        hm_free(copy);
+        return false;
+    }
+
+    hm_free(map);
+    hm_free(copy);
     return true;
 }

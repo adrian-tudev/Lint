@@ -16,6 +16,7 @@ void set_interpreter_config(RuntimeConfig config);
 bool execute(Program* program);
 bool execute_top_level(TopLevel* item, HashMap* ctx);
 bool execute_function_def(Function* function);
+bool execute_function();
 bool execute_statement(Statement* statement, HashMap* scope);
 bool execute_block(Block* block, HashMap* parent_scope);
 

@@ -4,10 +4,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef struct Function Function;
+
 typedef enum {
     VAL_BOOL,
     VAL_INT,
     VAL_STRING,
+    VAL_FUNCTION,
 } ValueType;
 
 typedef struct Value {
@@ -16,6 +19,7 @@ typedef struct Value {
         bool boolean;
         int64_t integer;
         char* string; // owned by the value
+        Function* function; // owned by the value
     } as;
 } Value;
 
@@ -23,6 +27,7 @@ typedef struct Value {
 Value* new_bool_value(bool value);
 Value* new_int_value(int64_t value);
 Value* new_string_value(const char* chars);
+Value* new_function_value(Function* fn);
 Value* copy_value(const Value* value);
 void free_value(Value* value);
 

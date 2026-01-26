@@ -147,7 +147,7 @@ struct Function {
   const char *identifier;
   // Vector<const char*> (parameter names)
   Vector params;
-  Block body;
+  Block *body;
 };
 
 typedef enum {

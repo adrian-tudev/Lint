@@ -21,10 +21,12 @@ Expression *expr_string(const char *value);
 Expression *expr_unary(OperatorKind op, Expression *operand);
 Expression *expr_binary(OperatorKind op, Expression *left, Expression *right);
 void expr_free(Expression *expr);
+Expression* expr_copy(const Expression* expr);
 
 Block *block_new(void);
 bool block_add(Block *block, Statement *stmt);
 void block_free(Block *block);
+Block* block_copy(const Block* block);
 
 Statement *stmt_expr(Expression *expr);
 Statement *stmt_assign(const char *identifier, Expression *rvalue, bool reassignment);
@@ -33,11 +35,13 @@ Statement *stmt_if(Expression *condition, Block *then_body, Block *else_body_or_
 Statement *stmt_while(Expression *condition, Block *body);
 Statement *stmt_block(Block *block);
 void stmt_free(Statement *stmt);
+Statement* stmt_copy(const Statement* stmt);
 
 Function *function_new(const char *identifier);
 bool function_add_param(Function *fn, const char *param);
 bool function_add_stmt(Function *fn, Statement *stmt);
 void function_free(Function *fn);
+Function* function_copy(const Function* fn);
 
 Program *program_new(void);
 bool program_add_statement(Program *p, Statement *stmt);
