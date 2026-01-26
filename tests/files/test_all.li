@@ -1,0 +1,46 @@
+# expressions
+# =============
+let a = 10;
+let b = 20;
+let f = 3.14;
+let t = true;
+let fls = false;
+
+let sum = a + b;
+let diff = b - a;
+let prod = a * 2;
+let quot = b / 2;
+let mixed = a + f;
+
+let is_eq = (a == 10);
+let is_neq = (a != b);
+let is_less = (a < b);
+let logic = (t && is_eq) || fls;
+let negation = !t;
+
+let result = 0;
+
+# control flow
+# =============
+if (a < b) {
+    result = 1;
+} else {
+    result = 2;
+}
+
+if (a > b) {
+    result = 3;
+}
+
+# loops
+# =============
+let counter = 0;
+while (counter < 5) {
+    counter = counter + 1;
+}
+
+# scopes
+if (true) {
+    let scoped = 100;
+    a = scoped;
+}
