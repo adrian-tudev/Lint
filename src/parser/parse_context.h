@@ -11,6 +11,11 @@ const Token* peek(void);
 const Token* peek_next(void);
 bool ctx_end(void);
 
+// Return the current index the ParseContext is at
+size_t get_ctx_idx(void);
+// Set the current index of ParseContext
+void set_ctx_idx(size_t idx);
+
 // true if current operator in ParseContext matches given OperatorKind
 bool match_op(OperatorKind op_kind);
 

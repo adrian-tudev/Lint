@@ -65,7 +65,7 @@ Statement *parse_statement(void) {
   return NULL;
 }
 
-static Statement *parse_block_statement(void) {
+Statement *parse_block_statement(void) {
   assert(match(TOK_LEFT_BRACE));
   Block *block = block_new();
   while (true) {
