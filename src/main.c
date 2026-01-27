@@ -6,6 +6,7 @@
 
 RuntimeConfig cfg = (RuntimeConfig) {
   .debug_info = false,
+  .show_tokens = false,
   .repl = true,
   .file = NULL,
 };
@@ -26,6 +27,9 @@ int main(int argc, char* args[]) {
     }
     if (strcmp(args[i], "-d") == 0)
       cfg.debug_info = true;
+    else if (strcmp(args[i], "--show_tokens") == 0) {
+      cfg.show_tokens = true;
+    }
   }
 
   if (cfg.file != NULL) {

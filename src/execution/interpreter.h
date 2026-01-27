@@ -7,6 +7,7 @@
 typedef struct RuntimeConfig{
   bool repl;
   bool debug_info;
+  bool show_tokens;
   const char* file;
 } RuntimeConfig;
 
@@ -15,8 +16,7 @@ void set_interpreter_config(RuntimeConfig config);
 // walks the tree and executes the AST
 bool execute(Program* program);
 bool execute_top_level(TopLevel* item, HashMap* ctx);
-bool execute_function_def(Function* function);
-bool execute_function();
+bool execute_function_def(Function* function, HashMap* ctx);
 bool execute_statement(Statement* statement, HashMap* scope);
 bool execute_block(Block* block, HashMap* parent_scope);
 

@@ -11,8 +11,6 @@
 #include "execution/interpreter.h"
 #include "lexer/token.h"
 
-
-
 void run_file(RuntimeConfig file_cfg) {
   FILE* file = fopen(file_cfg.file, "r");
   if (file == NULL) {
@@ -36,6 +34,9 @@ void run_file(RuntimeConfig file_cfg) {
     vec_free(&line_tokens);
     rows++;
   }
+
+  if (file_cfg.show_tokens)
+    print_tokens(tokens);
 
   Program* program = parse(tokens);
 
@@ -64,6 +65,9 @@ void repl(RuntimeConfig cfg) {
       add_history(line);
 
       Vector tokens = tokenize(line, 0);
+
+      if (cfg.show_tokens)
+        print_tokens(tokens);
 
       // try parse line
       if (!parse_line(program, tokens)) {
