@@ -46,6 +46,7 @@ int vec_merge(Vector* v, Vector* u) {
 
 void *vec_get(const Vector *v, size_t index) {
   if (index >= v->size) return NULL;
+  if (v == NULL || v->data == NULL) return NULL;
   return v->data[index];
 }
 
