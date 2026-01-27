@@ -28,27 +28,23 @@ bool parse_line(Program* program, Vector tokens) {
 }
 
 static bool try_parse(Program* program) {
+  if (peek() == NULL) return false;
   // TopLevel statements
-  Statement* stmt = NULL;
-  Function* fn = NULL;
-    
-  size_t lst_idx = get_ctx_idx();
-  stmt = parse_statement();
-  if (stmt) {
-    program_add_statement(program, stmt);
-    return true;
-  }   
-  // reset token
-  set_ctx_idx(lst_idx);
-
-  // failed to parse statement: 
-  // try parse function definition
-  fn = parse_function_def();
-  if (fn) {
-    program_add_function(program, fn);
-    return true;
+  if (peek()->type == TOK_FUNCTION) {
+    Function* fn = NULL;
+    fn = parse_function_def();
+    if (fn) {
+      program_add_function(program, fn);
+      return true;
+    }
+  } else {
+    Statement* stmt = NULL;
+    stmt = parse_statement();
+    if (stmt) {
+      program_add_statement(program, stmt);
+      return true;
+    }   
   }
-
   return false;
 }
 
