@@ -5,5 +5,7 @@
 #include "ast/grammar.h"
 
 Statement *parse_statement(void);
+Statement *parse_block_statement(void);
+Block *statement_to_block(Statement *stmt);
 
 #endif // STATEMENT_H_

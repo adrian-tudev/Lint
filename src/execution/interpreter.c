@@ -49,7 +49,7 @@ bool execute_top_level(TopLevel* item, HashMap* ctx) {
     }
     case TOP_FUNCTION: {
       Function* fn = item->as.function;
-      execute_function_def(fn);
+      execute_function_def(fn, ctx);
       break;
     }
     default:
@@ -59,7 +59,17 @@ bool execute_top_level(TopLevel* item, HashMap* ctx) {
   return true;
 }
 
-bool execute_function_def(Function* function) {
+bool execute_function_def(Function* function, HashMap* ctx) {
+  Value* val = hm_get(ctx, function->identifier);
+
+  // function cannot be redefined
+  if (val) {
+    error_log("Functions cannot be redefined!\n");
+    return false;
+  }
+
+  hm_set(ctx, function->identifier, new_function_value(function));
+
   return true;
 }
 

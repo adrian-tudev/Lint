@@ -5,12 +5,10 @@
 #include "parser/expression.h"
 #include "utils/error.h"
 
-static Statement *parse_block_statement(void);
 static Statement *parse_assignment_statement(void);
 static Statement *parse_return_statement(void);
 static Statement *parse_if_statement(void);
 static Statement *parse_while_statement(void);
-static Block *statement_to_block(Statement *stmt);
 
 Statement *parse_statement(void) {
   const Token *token = peek();
@@ -37,7 +35,6 @@ Statement *parse_statement(void) {
     return parse_block_statement();
     break;
   
-  // TODO: handle identifier as start of assignment statement or expression
   case TOK_IDENTIFIER: {
     const Token* nxt_tok = peek_next();
     // fall through if next token is null, let expression handle it
@@ -201,7 +198,7 @@ static Statement* parse_while_statement(void) {
 }
 
 // Helper to convert any statement (including STMT_BLOCK) into a Block*
-static Block *statement_to_block(Statement *stmt) {
+Block *statement_to_block(Statement *stmt) {
   if (stmt == NULL) return NULL;
   
   // If it's already a block statement, unwrap it to get the Block content

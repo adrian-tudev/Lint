@@ -39,7 +39,11 @@ Value* new_function_value(Function* fn) {
     Value* val = malloc(sizeof(Value));
     if (val == NULL) return NULL;
     val->type = VAL_FUNCTION;
-    val->as.function = fn;
+    val->as.function = function_copy(fn);
+    if (val->as.function == NULL) {
+        free(val);
+        return NULL;
+    }
     return val;
 }
 

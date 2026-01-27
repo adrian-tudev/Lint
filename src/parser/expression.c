@@ -1,6 +1,9 @@
 #include "parser/expression.h"
 
+#include <assert.h>
+
 #include "ast/grammar.h"
+#include "parser/function.h"
 #include "utils/error.h"
 
 // precedence levels in increasing order
@@ -90,10 +93,21 @@ static Expression* parse_unary(void) {
 
 static Expression* parse_primary(void) {
   const Token* token = peek();
+  if (token == NULL) {
+    error_log("Unexpected EOF, expected an expression.\n");
+    return NULL;
+  }
+
   if (match(TOK_LITERAL)) return expr_number(token->literal);
   else if (match(TOK_TRUE)) return expr_bool(true);
   else if (match(TOK_FALSE)) return expr_bool(false);
-  else if (match(TOK_IDENTIFIER)) return expr_identifier(token->token);
+  else if (token->type == TOK_IDENTIFIER) {
+    if (peek_next() != NULL && peek_next()->type == TOK_LEFT_PARENTHESIS) {
+      return parse_function_call();
+    }
+    assert(match(TOK_IDENTIFIER));
+    return expr_identifier(token->token);
+  }
   else if (match(TOK_LEFT_PARENTHESIS)) {
     Expression* expr = parse_expression();
     if (!match(TOK_RIGHT_PARENTHESIS)) {
@@ -110,11 +124,7 @@ static Expression* parse_primary(void) {
     return NULL;
   }
   else {
-    if (ctx_end()) {
-      error_log("Unexpected EOF, expected an expression.\n");
-    } else {
-      error_log("Unexpected token '%s', expected an expression.\n", peek()->token);
-    }
+    error_log("Unexpected token '%s', expected an expression.\n", peek()->token);
     return NULL;
   }
 }

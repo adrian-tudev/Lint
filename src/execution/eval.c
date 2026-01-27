@@ -42,18 +42,29 @@ Expression eval_expression(Expression* expression, HashMap* scope) {
         error_log("Undefined variable '%s'\n", expression->as.identifier);
         return bool_expr(false);
       }
+
+      // TODO: handle function calls
       switch (val->type) {
         case VAL_BOOL: return bool_expr(val->as.boolean);
         case VAL_INT: return num((double)val->as.integer);
         case VAL_STRING: return string_expr(val->as.string);
+        case VAL_FUNCTION: error_log("function is \n");
         default: return bool_expr(false);
       }
+    }
+
+    case EXPR_FN_CALL: {
+      break;
     }
     default:
       error_log("Unrecognized expression kind: %d\n", expression->kind);
   }
   // TODO: return invalid expr
   return bool_expr(false);
+}
+
+ReturnStmt function_call(Function* function, HashMap* scope) {
+
 }
 
 // =====================

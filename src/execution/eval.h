@@ -5,5 +5,6 @@
 #include "utils/hashmap.h"
 
 Expression eval_expression(Expression* expression, HashMap* scope);
+ReturnStmt function_call(Function* function, HashMap* scope);
 
 #endif // EVAL_H_
