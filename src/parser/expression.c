@@ -26,6 +26,7 @@ typedef struct {
 static Expression *parse_binary(Levels level);
 static Expression* parse_unary(void);
 static Expression* parse_primary(void);
+static Expression* parse_function_call(void);
 
 // expr  ::= term ( ( "+" | "-" ) term )*
 // factor ::= NUMBER | IDENTIFIER | "(" expr ")"
@@ -73,7 +74,7 @@ static Expression* parse_binary(Levels level) {
     if (right == NULL) return NULL;
     expr = expr_binary(op_kind, expr, right);
   }
-  return expr;
+  return expr; // Vector<Expression*>
 }
 
 static Expression* parse_unary(void) {
@@ -128,3 +129,41 @@ static Expression* parse_primary(void) {
     return NULL;
   }
 }
+
+static void free_expression_vector(Vector* v) {
+  for (size_t i = 0; i < v->size; i++) {
+    expr_free((Expression*)vec_get(v, i));
+  }
+  vec_free(v);
+}
+
+static Expression* parse_function_call(void) {
+  // TODO: error msg?
+  if (peek() == NULL) return NULL;
+  const char* fn_name = peek()->token;
+  assert(match(TOK_IDENTIFIER));
+  assert(match(TOK_LEFT_PARENTHESIS));
+
+  Vector args; // Vector<Expression*>
+  vec_init(&args);
+
+  // no arguments given
+  if (match(TOK_RIGHT_PARENTHESIS)) goto ret;
+
+  do {
+    Expression* arg = parse_expression();
+    if (arg == NULL) {
+      free_expression_vector(&args);
+      return NULL;
+    }
+    vec_push(&args, arg);
+  } while (match(TOK_COMMA));
+  if (!match(TOK_RIGHT_PARENTHESIS)) {
+    error_log("Expected ')' after function call!\n");
+    free_expression_vector(&args);
+    return NULL;
+  }
+ret:
+  return expr_fn_call(fn_name, &args);
+}
+
