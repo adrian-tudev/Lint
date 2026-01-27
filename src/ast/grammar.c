@@ -62,6 +62,14 @@ Expression *expr_binary(OperatorKind op, Expression *left, Expression *right) {
   return e;
 }
 
+Expression *expr_fn_call(const char *identifier, Vector *arguments) {
+  Expression *e = expr_alloc(EXPR_FN_CALL);
+  if (!e) return NULL;
+  e->as.fn_call.identifier = identifier;
+  e->as.fn_call.arguments = *arguments;
+  return e;
+}
+
 void print(Expression expr) {
   switch (expr.kind) {
     case EXPR_BOOL:
@@ -86,6 +94,12 @@ void expr_free(Expression *expr) {
     case EXPR_BINARY:
       expr_free(expr->as.binary.left);
       expr_free(expr->as.binary.right);
+      break;
+    case EXPR_FN_CALL:
+      for (size_t i = 0; i < expr->as.fn_call.arguments.size; i++) {
+        expr_free((Expression*)vec_get(&expr->as.fn_call.arguments, i));
+      }
+      vec_free(&expr->as.fn_call.arguments);
       break;
     case EXPR_NUMBER:
     case EXPR_BOOL:
@@ -272,6 +286,24 @@ Expression* expr_copy(const Expression* expr) {
                 return NULL;
             }
             return expr_binary(expr->as.binary.op, left, right);
+        }
+        case EXPR_FN_CALL: {
+            Vector new_arguments;
+            vec_init(&new_arguments);
+            for (size_t i = 0; i < expr->as.fn_call.arguments.size; i++) {
+                Expression* arg = (Expression*)vec_get(&expr->as.fn_call.arguments, i);
+                Expression* new_arg = expr_copy(arg);
+                if (!new_arg) {
+                    // Free already copied arguments and the vector itself
+                    for (size_t j = 0; j < new_arguments.size; j++) {
+                        expr_free((Expression*)vec_get(&new_arguments, j));
+                    }
+                    vec_free(&new_arguments);
+                    return NULL;
+                }
+                vec_push(&new_arguments, new_arg);
+            }
+            return expr_fn_call(expr->as.fn_call.identifier, &new_arguments);
         }
         default:
             return NULL;
@@ -562,6 +594,12 @@ void ast_print_expr(const Expression *expr, int indent) {
       printf("Binary(%s)\n", op_to_string(expr->as.binary.op));
       ast_print_expr(expr->as.binary.left, indent + 1);
       ast_print_expr(expr->as.binary.right, indent + 1);
+      break;
+    case EXPR_FN_CALL:
+      printf("FnCall(%s)\n", expr->as.fn_call.identifier);
+      for (size_t i = 0; i < expr->as.fn_call.arguments.size; i++) {
+        ast_print_expr((Expression*)vec_get(&expr->as.fn_call.arguments, i), indent + 1);
+      }
       break;
     case EXPR_INVALID:
       printf("Invalid\n");

@@ -53,6 +53,7 @@ typedef enum {
   EXPR_BOOL,
   EXPR_IDENTIFIER,
   EXPR_STRING,
+  EXPR_FN_CALL,
   EXPR_UNARY,
   EXPR_BINARY,
   EXPR_INVALID,
@@ -77,6 +78,10 @@ struct Expression {
       Expression *left;
       Expression *right;
     } binary;
+    struct {
+      const char *identifier;
+      Vector arguments; // Vector<Expression*>
+    } fn_call;
   } as;
 };
 

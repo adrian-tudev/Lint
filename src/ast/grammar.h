@@ -20,6 +20,7 @@ Expression *expr_identifier(const char *name);
 Expression *expr_string(const char *value);
 Expression *expr_unary(OperatorKind op, Expression *operand);
 Expression *expr_binary(OperatorKind op, Expression *left, Expression *right);
+Expression *expr_fn_call(const char *identifier, Vector *arguments);
 void expr_free(Expression *expr);
 Expression* expr_copy(const Expression* expr);
 
