@@ -28,7 +28,7 @@ Function* parse_function_def(void) {
 
   Block* fn_body = statement_to_block(parse_block_statement());
   if (fn_body == NULL) {
-    error_log("Couldn't parse function body");
+    error_log("Couldn't parse function body\n");
     function_free(fn);
     return NULL;
   }

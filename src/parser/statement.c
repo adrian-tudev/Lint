@@ -19,13 +19,14 @@ Statement *parse_statement(void) {
   case TOK_LET:
     return parse_assignment_statement();
   case TOK_RETURN:
-    break;
+    return parse_return_statement();
 
   // if parses if/elif/else statements
   case TOK_IF:
     return parse_if_statement();
     break;
 
+  // TODO: maybe in the future
   case TOK_FOR:
     break;
   case TOK_WHILE:
@@ -36,14 +37,9 @@ Statement *parse_statement(void) {
     break;
   
   case TOK_IDENTIFIER: {
-    const Token* nxt_tok = peek_next();
-    // fall through if next token is null, let expression handle it
-    if (nxt_tok == NULL) {}
-    // assignment
-    else if (peek_next()->type == TOK_EQUAL)
+    if (peek_next() != NULL && peek_next()->type == TOK_EQUAL)
       return parse_assignment_statement();
-    // any other case, fall through
-    else {}
+    // fall through and parse as expression
   }
 
   // TODO: match against only valid expression symbols
@@ -195,6 +191,18 @@ static Statement* parse_while_statement(void) {
     return stmt_while(condition, body_block);
   }
   return NULL;
+}
+
+static Statement* parse_return_statement(void) {
+  assert(match(TOK_RETURN));
+
+  Expression* ret_val = parse_expression();
+  if (!match(TOK_SEMICOLON)) {
+    error_log("Missing ';' in return statement\n");
+    expr_free(ret_val);
+    return NULL;
+  }
+  return stmt_return(ret_val);
 }
 
 // Helper to convert any statement (including STMT_BLOCK) into a Block*
