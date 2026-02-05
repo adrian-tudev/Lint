@@ -31,6 +31,12 @@ Expression *expr_bool(bool value) {
   return e;
 }
 
+Expression *expr_invalid(void) {
+  Expression *e = expr_alloc(EXPR_INVALID);
+  if (!e) return NULL;
+  return e;
+}
+
 Expression *expr_identifier(const char *name) {
   Expression *e = expr_alloc(EXPR_IDENTIFIER);
   if (!e) return NULL;
@@ -103,6 +109,7 @@ void expr_free(Expression *expr) {
       break;
     case EXPR_NUMBER:
     case EXPR_BOOL:
+    case EXPR_INVALID:
     case EXPR_IDENTIFIER:
     case EXPR_STRING:
     default:
@@ -305,6 +312,8 @@ Expression* expr_copy(const Expression* expr) {
             }
             return expr_fn_call(expr->as.fn_call.identifier, &new_arguments);
         }
+        case EXPR_INVALID:
+            return expr_invalid();
         default:
             return NULL;
     }

@@ -16,6 +16,7 @@
 
 Expression *expr_number(double value);
 Expression *expr_bool(bool value);
+Expression *expr_invalid(void);
 Expression *expr_identifier(const char *name);
 Expression *expr_string(const char *value);
 Expression *expr_unary(OperatorKind op, Expression *operand);

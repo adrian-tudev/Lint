@@ -15,9 +15,10 @@ static Expression eval_unary_expression(Expression expr, OperatorKind op, HashMa
 static Expression bool_expr(bool value);
 static Expression num(double value);
 static Expression string_expr(const char* value);
+static Expression invalid_expr(void);
 
 Expression eval_expression(Expression* expression, HashMap* scope) {
-  if (expression == NULL) return bool_expr(false);
+  if (expression == NULL) return invalid_expr();
   switch (expression->kind) {
     // default datatypes
     case EXPR_NUMBER: case EXPR_BOOL: case EXPR_STRING:
@@ -43,27 +44,26 @@ Expression eval_expression(Expression* expression, HashMap* scope) {
         return bool_expr(false);
       }
 
-      // TODO: handle function calls
       switch (val->type) {
         case VAL_BOOL: return bool_expr(val->as.boolean);
         case VAL_INT: return num((double)val->as.integer);
         case VAL_STRING: return string_expr(val->as.string);
-        case VAL_FUNCTION: error_log("function is \n");
-        default: return bool_expr(false);
+        case VAL_FUNCTION: error_log("Function is used as a variable!\n");
+        default: return invalid_expr();
       }
     }
 
     case EXPR_FN_CALL: {
+      error_log("not implemented function calls yet :/\n");
       break;
     }
     default:
       error_log("Unrecognized expression kind: %d\n", expression->kind);
   }
-  // TODO: return invalid expr
-  return bool_expr(false);
+  return invalid_expr();
 }
 
-ReturnStmt function_call(Function* function, HashMap* scope) {
+Expression function_call(Function* function, HashMap* scope) {
 
 }
 
@@ -117,7 +117,6 @@ static Expression eval_binary_expression(Expression left, Expression right, Oper
     error_log("Can't perform numerical operation on booleans.\n");
     goto ret_error;
   }
-
 
   switch (op) {
     case OP_ADD:
@@ -177,5 +176,5 @@ static Expression eval_unary_expression(Expression expr, OperatorKind op, HashMa
       break;
   }
 
-  return bool_expr(false);
+  return invalid_expr();
 }
